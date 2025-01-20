@@ -36,7 +36,7 @@ class _SignupPageState extends State<SignupPage> {
                   Navigator.pop(context); // Close the dialog
                   Navigator.pop(context); // Go back to login page
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -86,6 +86,9 @@ class _SignupPageState extends State<SignupPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
+              keyboardType: TextInputType.emailAddress,
+              autocorrect: false,
+              textCapitalization: TextCapitalization.none,
             ),
             const SizedBox(height: 20),
             TextField(
@@ -93,7 +96,7 @@ class _SignupPageState extends State<SignupPage> {
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Password',
-                prefixIcon: Icon(Icons.lock),
+                prefixIcon: const Icon(Icons.lock),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
@@ -105,7 +108,7 @@ class _SignupPageState extends State<SignupPage> {
               obscureText: true,
               decoration: InputDecoration(
                 labelText: 'Confirm Password',
-                prefixIcon: Icon(Icons.lock),
+                prefixIcon: const Icon(Icons.lock),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),

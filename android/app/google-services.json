@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "234025044437",
+    "project_id": "grow-mate-252dd",
+    "storage_bucket": "grow-mate-252dd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:234025044437:android:ee8a4432b3fa9b92cc955c",
+        "android_client_info": {
+          "package_name": "com.example.grow_mate_version2"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCHx5DwNAOPcdxJ6xeMkxSPM6nZ7lwmkkM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
