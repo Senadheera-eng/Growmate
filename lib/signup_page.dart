@@ -17,6 +17,38 @@ class _SignupPageState extends State<SignupPage> {
   final TextEditingController confirmPasswordController = TextEditingController();
   bool isLoading = false;
 
+  void showSuccessMessage(BuildContext context) {
+    // Show the success message using Snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Account creation successful!'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 3),
+      ),
+    );
+
+    // After a short delay, show the dialog and navigate away
+    Future.delayed(const Duration(milliseconds: 500), () {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => AlertDialog(
+          title: const Text('Success'),
+          content: const Text('Account created successfully!'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                Navigator.pop(context); // Go back to login page
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
   Future<void> signup(BuildContext context) async {
     if (passwordController.text != confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -40,26 +72,13 @@ class _SignupPageState extends State<SignupPage> {
       await _firestore.collection('users').doc(userCredential.user!.uid).set({
         'email': emailController.text.trim(),
         'createdAt': FieldValue.serverTimestamp(),
-        // Add any additional user data fields here
       });
 
-      // Show success dialog
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Success'),
-          content: const Text('Account created successfully!'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Go back to login page
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
+      // After account creation, show success message and navigate
+      if (mounted) {
+        showSuccessMessage(context);
+      }
+
     } on FirebaseAuthException catch (e) {
       String errorMessage = 'An error occurred';
       
@@ -71,13 +90,17 @@ class _SignupPageState extends State<SignupPage> {
         errorMessage = 'Invalid email format.';
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
     } finally {
-      setState(() {
-        isLoading = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
     }
   }
 
