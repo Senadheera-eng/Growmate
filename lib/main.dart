@@ -12,7 +12,7 @@ class GrowMateApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'GrowMate',
+      title: 'GrowMate-Plant Companion',
       theme: ThemeData(primarySwatch: Colors.green),
       home: LoginPage(userAccounts: userAccounts),
     );

@@ -10,7 +10,7 @@ class SettingsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           'Settings',
           style: TextStyle(
               fontWeight: FontWeight.bold, fontSize: 24, fontFamily: 'Roboto'),
@@ -24,32 +24,32 @@ class SettingsSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SwitchListTile(
-              title: Text('Dark Mode', style: TextStyle(fontSize: 18)),
+              title: const Text('Dark Mode', style: TextStyle(fontSize: 18)),
               value: Theme.of(context).brightness == Brightness.dark,
               onChanged: onThemeChange,
             ),
-            Divider(),
+            const Divider(),
             ListTile(
               title:
-                  Text('Manage Notifications', style: TextStyle(fontSize: 18)),
-              leading: Icon(Icons.notifications),
+                  const Text('Manage Notifications', style: TextStyle(fontSize: 18)),
+              leading: const Icon(Icons.notifications),
               onTap: () {
                 // TODO: Navigate to Notifications settings
               },
             ),
-            Divider(),
+            const Divider(),
             ListTile(
-              title: Text('Account Settings', style: TextStyle(fontSize: 18)),
-              leading: Icon(Icons.account_circle),
+              title: const Text('Account Settings', style: TextStyle(fontSize: 18)),
+              leading: const Icon(Icons.account_circle),
               onTap: () {
                 // TODO: Navigate to Account settings
               },
             ),
-            Divider(),
+            const Divider(),
             ListTile(
-              title: Text('Logout',
+              title: const Text('Logout',
                   style: TextStyle(fontSize: 18, color: Colors.red)),
-              leading: Icon(Icons.logout, color: Colors.red),
+              leading: const Icon(Icons.logout, color: Colors.red),
               onTap: () {
                 // TODO: Implement Logout functionality
               },

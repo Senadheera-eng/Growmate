@@ -28,8 +28,8 @@ class _SignupPageState extends State<SignupPage> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Account Created'),
-            content: Text('Your account has been created successfully.'),
+            title: const Text('Account Created'),
+            content: const Text('Your account has been created successfully.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -53,12 +53,12 @@ class _SignupPageState extends State<SignupPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Sign Up Failed'),
+        title: const Text('Sign Up Failed'),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -69,7 +69,7 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Account'),
+        title: const Text('Create Account'),
         backgroundColor: Colors.green.shade700,
       ),
       body: Padding(
@@ -81,13 +81,13 @@ class _SignupPageState extends State<SignupPage> {
               controller: emailController,
               decoration: InputDecoration(
                 labelText: 'Email',
-                prefixIcon: Icon(Icons.email),
+                prefixIcon: const Icon(Icons.email),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: passwordController,
               obscureText: true,
@@ -99,7 +99,7 @@ class _SignupPageState extends State<SignupPage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               controller: confirmPasswordController,
               obscureText: true,
@@ -111,17 +111,17 @@ class _SignupPageState extends State<SignupPage> {
                 ),
               ),
             ),
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
             ElevatedButton(
               onPressed: () => signup(context),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green.shade700,
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 100),
+                padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 100),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: Text(
+              child:const  Text(
                 'Sign Up',
                 style: TextStyle(
                   fontSize: 18,
