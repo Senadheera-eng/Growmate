@@ -7,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'tree_model.dart';
+import 'disease_model.dart';
 
 class AddTreePage extends StatefulWidget {
   const AddTreePage({Key? key}) : super(key: key);
@@ -22,8 +23,28 @@ class _AddTreePageState extends State<AddTreePage> {
   final _locationController = TextEditingController();
   final _diseaseDescController = TextEditingController();
   bool _isDiseased = false;
+  String? _selectedDiseaseId;
+  List<DiseaseModel> _diseases = [];
   List<File> _selectedImages = [];
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDiseases();
+  }
+
+  Future<void> _loadDiseases() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('diseases')
+        .get();
+    
+    setState(() {
+      _diseases = snapshot.docs
+          .map((doc) => DiseaseModel.fromMap({...doc.data(), 'id': doc.id}))
+          .toList();
+    });
+  }
 
   @override
   void dispose() {
@@ -91,8 +112,10 @@ class _AddTreePageState extends State<AddTreePage> {
         photoUrls: photoUrls,
         isDiseased: _isDiseased,
         diseaseDescription: _isDiseased ? _diseaseDescController.text : null,
+        diseaseId: _isDiseased ? _selectedDiseaseId : null,
         location: _locationController.text,
         userId: userId,
+        diseaseIdentifiedDate: _isDiseased ? DateTime.now() : null,
       );
 
       await FirebaseFirestore.instance
@@ -115,6 +138,67 @@ class _AddTreePageState extends State<AddTreePage> {
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  Widget _buildDiseaseSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SwitchListTile(
+          title: const Text('Is the tree diseased?'),
+          value: _isDiseased,
+          onChanged: (value) {
+            setState(() {
+              _isDiseased = value;
+              if (!value) {
+                _selectedDiseaseId = null;
+                _diseaseDescController.clear();
+              }
+            });
+          },
+        ),
+        if (_isDiseased) ...[
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Select Disease',
+              border: OutlineInputBorder(),
+            ),
+            value: _selectedDiseaseId,
+            items: _diseases.map((disease) {
+              return DropdownMenuItem(
+                value: disease.id,
+                child: Text(disease.name),
+              );
+            }).toList(),
+            onChanged: (value) {
+              setState(() {
+                _selectedDiseaseId = value;
+                if (value != null) {
+                  final disease = _diseases.firstWhere((d) => d.id == value);
+                  _diseaseDescController.text = disease.description;
+                }
+              });
+            },
+            validator: (value) => _isDiseased && value == null
+                ? 'Please select a disease'
+                : null,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _diseaseDescController,
+            decoration: const InputDecoration(
+              labelText: 'Additional Disease Notes',
+              border: OutlineInputBorder(),
+            ),
+            maxLines: 3,
+            validator: (value) => _isDiseased && (value?.isEmpty ?? true)
+                ? 'Please add disease notes'
+                : null,
+          ),
+        ],
+      ],
+    );
   }
 
   @override
@@ -219,7 +303,9 @@ class _AddTreePageState extends State<AddTreePage> {
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value?.isEmpty ?? true) return 'Please enter age';
-                if (int.tryParse(value!) == null) return 'Please enter a valid number';
+                final age = int.tryParse(value!);
+                if (age == null) return 'Please enter a valid number';
+                if (age < 1 || age > 6) return 'Age must be between 1 and 6 months';
                 return null;
               },
             ),
@@ -234,28 +320,7 @@ class _AddTreePageState extends State<AddTreePage> {
             ),
             const SizedBox(height: 16),
             
-            SwitchListTile(
-              title: const Text('Is the tree diseased?'),
-              value: _isDiseased,
-              onChanged: (value) {
-                setState(() => _isDiseased = value);
-              },
-            ),
-            
-            if (_isDiseased) ...[
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _diseaseDescController,
-                decoration: const InputDecoration(
-                  labelText: 'Disease Description',
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 3,
-                validator: (value) => _isDiseased && (value?.isEmpty ?? true)
-                    ? 'Please describe the disease'
-                    : null,
-              ),
-            ],
+            _buildDiseaseSection(),
             
             const SizedBox(height: 24),
             
