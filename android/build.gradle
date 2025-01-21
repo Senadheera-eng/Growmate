@@ -1,3 +1,4 @@
+
 buildscript {
     ext.kotlin_version = '1.9.10'
     repositories {
@@ -31,3 +32,6 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
+
+// Add this line to enable FlutterFire plugins
+apply plugin: 'com.google.gms.google-services'
