@@ -48,3 +48,7 @@ android {
 flutter {
     source = "../.."
 }
+dependencies {
+    // Add the Firebase dependency if you're using FlutterFire
+    implementation platform('com.google.firebase:firebase-bom:32.7.0')
+}
