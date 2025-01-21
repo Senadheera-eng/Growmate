@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grow_mate_version2/treatment_steps_widget.dart';
 import 'tree_model.dart';
 import 'disease_model.dart';
 
@@ -229,8 +230,8 @@ class _TipsSectionState extends State<TipsSection> {
           return SingleChildScrollView(
             child: _buildDiseaseSpecificTips(tree),
           );
-        } 
-        
+        }
+
         // For other categories (healthy trees), show care tips
         return SingleChildScrollView(
           child: _buildCareTips(tree),
@@ -335,7 +336,8 @@ class _TipsSectionState extends State<TipsSection> {
                 const SizedBox(height: 8),
                 _buildListSection('Symptoms', disease.symptoms),
                 _buildListSection('Treatments', disease.treatments),
-                _buildListSection('Preventive Measures', disease.preventiveMeasures),
+                _buildListSection(
+                    'Preventive Measures', disease.preventiveMeasures),
               ],
             ),
           ),
@@ -367,7 +369,7 @@ class _TipsSectionState extends State<TipsSection> {
     );
   }
 
-  Widget _buildDiseaseSpecificTips(TreeModel tree) {
+  /* Widget _buildDiseaseSpecificTips(TreeModel tree) {
     if (!tree.isDiseased || tree.diseaseId == null) {
       return const SizedBox.shrink();
     }
@@ -423,7 +425,198 @@ class _TipsSectionState extends State<TipsSection> {
         );
       },
     );
+  } */
+  /* Widget _buildDiseaseSpecificTips(TreeModel tree) {
+    if (!tree.isDiseased || tree.diseaseId == null) {
+      return const SizedBox.shrink();
+    }
+
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance
+          .collection('diseases')
+          .doc(tree.diseaseId)
+          .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final diseaseData = snapshot.data!.data() as Map<String, dynamic>;
+        final disease =
+            DiseaseModel.fromMap({...diseaseData, 'id': snapshot.data!.id});
+
+        return Column(
+          children: [
+            Card(
+              margin: const EdgeInsets.all(16),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.warning,
+                            color: _getSeverityColor(disease.severity)),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            'Disease Treatment Plan: ${disease.name}',
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Divider(),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Identified on: ${_formatDate(tree.diseaseIdentifiedDate ?? DateTime.now())}',
+                      style: const TextStyle(fontStyle: FontStyle.italic),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildListSection(
+                        'Required Treatments', disease.treatments),
+                    _buildListSection(
+                        'Preventive Measures', disease.preventiveMeasures),
+                  ],
+                ),
+              ),
+            ),
+            // Add Treatment Steps Widget
+            TreatmentStepsWidget(
+              treeId: tree.id,
+              diseaseId: tree.diseaseId!,
+            ),
+          ],
+        );
+      },
+    );
+  } */
+ Widget _buildDiseaseSpecificTips(TreeModel tree) {
+  if (!tree.isDiseased || tree.diseaseId == null) {
+    return const Center(
+      child: Text('This tree has no disease treatment plan'),
+    );
   }
+
+  print('Building disease tips for tree: ${tree.id}, disease: ${tree.diseaseId}');
+
+  return StreamBuilder<DocumentSnapshot>(
+    stream: FirebaseFirestore.instance
+        .collection('diseases')
+        .doc(tree.diseaseId)
+        .snapshots(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (!snapshot.data!.exists) {
+        return const Center(
+          child: Text('Disease information not found'),
+        );
+      }
+
+      final diseaseData = snapshot.data!.data() as Map<String, dynamic>;
+      final disease = DiseaseModel.fromMap({...diseaseData, 'id': snapshot.data!.id});
+
+      return StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('treatment_steps')
+            .where('diseaseId', isEqualTo: tree.diseaseId)
+            .snapshots(),
+        builder: (context, stepsSnapshot) {
+          if (!stepsSnapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          print('Found ${stepsSnapshot.data!.docs.length} treatment steps'); // Debug log
+
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Disease Information Card
+                Card(
+                  margin: const EdgeInsets.all(16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.warning, color: _getSeverityColor(disease.severity)),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Disease Treatment Plan: ${disease.name}',
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const Divider(),
+                        const SizedBox(height: 8),
+                        if (tree.diseaseIdentifiedDate != null)
+                          Text(
+                            'Identified on: ${_formatDate(tree.diseaseIdentifiedDate!)}',
+                            style: const TextStyle(fontStyle: FontStyle.italic),
+                          ),
+                        const SizedBox(height: 16),
+                        _buildListSection('Required Treatments', disease.treatments),
+                        _buildListSection('Preventive Measures', disease.preventiveMeasures),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Treatment Steps Section
+                if (stepsSnapshot.data!.docs.isNotEmpty) ... [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: Text(
+                      'Treatment Steps',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: TreatmentStepsWidget(
+                      treeId: tree.id,
+                      diseaseId: tree.diseaseId!,
+                    ),
+                  ),
+                ] else
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      'No treatment steps have been defined for this disease yet. '
+                      'Please check back later or contact support for assistance.',
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          );
+        },
+      );
+    },
+  );
+}
 
   Widget _buildCareTips(TreeModel tree) {
     // Simple query with just category filter
