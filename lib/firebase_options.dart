@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -28,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -64,6 +55,35 @@ class DefaultFirebaseOptions {
     projectId: 'grow-mate-252dd',
     storageBucket: 'grow-mate-252dd.firebasestorage.app',
     iosBundleId: 'com.example.growMateVersion2',
+  );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyCkZJNXGgXBfPXgVsKLXhtQGNt5d_z3Zrg',
+    appId: '1:234025044437:web:7c9b42c8aab40b33cc955c',
+    messagingSenderId: '234025044437',
+    projectId: 'grow-mate-252dd',
+    authDomain: 'grow-mate-252dd.firebaseapp.com',
+    storageBucket: 'grow-mate-252dd.firebasestorage.app',
+    measurementId: 'G-6KRHMQP485',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyCqscmMdzJShE2oiA4OvOZIWMKP98jHIxo',
+    appId: '1:234025044437:ios:60c87f8838f24a2acc955c',
+    messagingSenderId: '234025044437',
+    projectId: 'grow-mate-252dd',
+    storageBucket: 'grow-mate-252dd.firebasestorage.app',
+    iosBundleId: 'com.example.growMateVersion2',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCkZJNXGgXBfPXgVsKLXhtQGNt5d_z3Zrg',
+    appId: '1:234025044437:web:9fd3b1541f7d0d96cc955c',
+    messagingSenderId: '234025044437',
+    projectId: 'grow-mate-252dd',
+    authDomain: 'grow-mate-252dd.firebaseapp.com',
+    storageBucket: 'grow-mate-252dd.firebasestorage.app',
+    measurementId: 'G-V70YKGMEJ6',
   );
 
 }
