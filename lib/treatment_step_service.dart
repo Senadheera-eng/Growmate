@@ -10,6 +10,7 @@ class TreatmentStepService {
 
   // Get treatment steps for a disease
   Stream<List<TreatmentStep>> getTreatmentSteps(String diseaseId) {
+    
     print('Fetching steps for disease: $diseaseId'); // Debug log
 
     return _firestore
