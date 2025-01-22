@@ -81,15 +81,16 @@ class TreatmentStepsWidget extends StatelessWidget {
     TreatmentStepProgress? currentProgress,
     List<TreatmentStepProgress> completedSteps,
   ) {
-    final completedStep = completedSteps
-        .firstWhere((progress) => progress.stepId == step.id, orElse: () => TreatmentStepProgress(
-            id: '',
-            treeId: '',
-            diseaseId: '',
-            stepId: '',
-            userId: '',
-            startedDate: DateTime.now(),
-          ));
+    final completedStep =
+        completedSteps.firstWhere((progress) => progress.stepId == step.id,
+            orElse: () => TreatmentStepProgress(
+                  id: '',
+                  treeId: '',
+                  diseaseId: '',
+                  stepId: '',
+                  userId: '',
+                  startedDate: DateTime.now(),
+                ));
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -100,7 +101,8 @@ class TreatmentStepsWidget extends StatelessWidget {
           title: Row(
             children: [
               CircleAvatar(
-                backgroundColor: _getStepColor(isCompleted, isCurrent, canStart),
+                backgroundColor:
+                    _getStepColor(isCompleted, isCurrent, canStart),
                 child: Text(
                   step.stepNumber.toString(),
                   style: const TextStyle(color: Colors.white),
@@ -184,8 +186,8 @@ class TreatmentStepsWidget extends StatelessWidget {
                           children: [
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () =>
-                                    _completeStep(context, currentProgress, true),
+                                onPressed: () => _completeStep(
+                                    context, currentProgress, true),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.green,
                                 ),
@@ -195,8 +197,8 @@ class TreatmentStepsWidget extends StatelessWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: ElevatedButton(
-                                onPressed: () =>
-                                    _completeStep(context, currentProgress, false),
+                                onPressed: () => _completeStep(
+                                    context, currentProgress, false),
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.orange,
                                 ),
@@ -207,7 +209,8 @@ class TreatmentStepsWidget extends StatelessWidget {
                         ),
                       ],
                     )
-                  else if (isCompleted && completedStep.outcomeAchieved == false)
+                  else if (isCompleted &&
+                      completedStep.outcomeAchieved == false)
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -275,7 +278,7 @@ class TreatmentStepsWidget extends StatelessWidget {
     }
   }
 
-  Future<void> _completeStep(
+  /* Future<void> _completeStep(
     BuildContext context,
     TreatmentStepProgress progress,
     bool outcomeAchieved,
@@ -285,22 +288,88 @@ class TreatmentStepsWidget extends StatelessWidget {
         progressId: progress.id,
         outcomeAchieved: outcomeAchieved,
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            outcomeAchieved
-                ? 'Great! Step completed successfully'
-                : 'Step completed. Check alternative tips',
-          ),
-          backgroundColor: outcomeAchieved ? Colors.green : Colors.orange,
-        ),
+
+      final allStepsCompleted = await _stepService.verifyAllStepsCompleted(
+        progress.treeId,
+        progress.diseaseId,
       );
+
+      if (allStepsCompleted) {
+        await _stepService.markTreeAsHealthy(progress.treeId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('All treatment steps completed. Tree is now healthy!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              outcomeAchieved
+                  ? 'Step completed successfully'
+                  : 'Step completed. Check alternative tips',
+            ),
+            backgroundColor: outcomeAchieved ? Colors.green : Colors.orange,
+          ),
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error completing step: $e')),
       );
     }
+  } */
+ // In TreatmentStepsWidget class
+Future<void> _completeStep(
+  BuildContext context,
+  TreatmentStepProgress progress,
+  bool outcomeAchieved,
+) async {
+  try {
+    // Complete the current step
+    await _stepService.completeStep(
+      progressId: progress.id,
+      outcomeAchieved: outcomeAchieved,
+    );
+
+    // Only check for all steps completion if this step was successful
+    if (outcomeAchieved) {
+      final allStepsCompleted = await _stepService.verifyAllStepsCompleted(
+        progress.treeId,
+        progress.diseaseId,
+      );
+
+      if (allStepsCompleted) {
+        // All steps are completed successfully, mark tree as healthy
+        await _stepService.markTreeAsHealthy(progress.treeId);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('All treatment steps completed successfully! Tree is now healthy.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        // Not all steps are completed yet
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Step completed successfully. Continue with remaining steps.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } else {
+      // Step was not successful
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Step completed. Check alternative tips and try again.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+    }
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error completing step: $e')),
+    );
   }
+}
 
   Future<void> _retryStep(BuildContext context, TreatmentStep step) async {
     try {
