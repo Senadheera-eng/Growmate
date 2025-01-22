@@ -177,4 +177,43 @@ class TreatmentStepService {
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
+
+  Future<void> markTreeAsHealthy(String treeId) async {
+    try {
+      final userId = _auth.currentUser?.uid;
+      if (userId == null) throw Exception('User not authenticated');
+
+      await _firestore.collection('trees').doc(treeId).update({
+        'isDiseased': false,
+        'diseaseId': null,
+        'diseaseDescription': null,
+      });
+
+      print('Tree marked as healthy');
+    } catch (e) {
+      print('Error marking tree as healthy: $e');
+      throw Exception('Failed to mark tree as healthy: ${e.toString()}');
+    }
+  }
+
+  Future<bool> verifyAllStepsCompleted(String treeId, String diseaseId) async {
+    try {
+      final userId = _auth.currentUser?.uid;
+      if (userId == null) throw Exception('User not authenticated');
+
+      final progressSnapshot = await _firestore
+          .collection('treatment_progress')
+          .where('treeId', isEqualTo: treeId)
+          .where('diseaseId', isEqualTo: diseaseId)
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      final allSteps = progressSnapshot.docs.every((doc) => doc.data()['completedDate'] != null);
+      return allSteps;
+    } catch (e) {
+      print('Error verifying steps: $e');
+      throw Exception('Failed to verify steps: ${e.toString()}');
+    }
+  }
+
 }
