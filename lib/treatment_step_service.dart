@@ -202,25 +202,6 @@ class TreatmentStepService {
     }
   }
 
-  /* Future<bool> verifyAllStepsCompleted(String treeId, String diseaseId) async {
-    try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) throw Exception('User not authenticated');
-
-      final progressSnapshot = await _firestore
-          .collection('treatment_progress')
-          .where('treeId', isEqualTo: treeId)
-          .where('diseaseId', isEqualTo: diseaseId)
-          .where('userId', isEqualTo: userId)
-          .get();
-
-      final allSteps = progressSnapshot.docs.every((doc) => doc.data()['completedDate'] != null);
-      return allSteps;
-    } catch (e) {
-      print('Error verifying steps: $e');
-      throw Exception('Failed to verify steps: ${e.toString()}');
-    }
-  } */
   // treatment_step_service.dart
   Future<bool> verifyAllStepsCompleted(String treeId, String diseaseId) async {
     try {
