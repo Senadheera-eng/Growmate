@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 import 'tree_model.dart';
 import 'disease_model.dart';
+import 'location_picker.dart';
 
 class AddTreePage extends StatefulWidget {
   const AddTreePage({Key? key}) : super(key: key);
@@ -27,6 +28,20 @@ class _AddTreePageState extends State<AddTreePage> {
   List<DiseaseModel> _diseases = [];
   List<File> _selectedImages = [];
   bool _isLoading = false;
+  String? _selectedLocation;
+
+  Future<void> _selectLocation() async {
+    final selectedLocation = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => LocationPicker()),
+    );
+    if (selectedLocation != null) {
+      setState(() {
+        _selectedLocation = selectedLocation;
+        _locationController.text = _selectedLocation!;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -313,10 +328,21 @@ class _AddTreePageState extends State<AddTreePage> {
             
             TextFormField(
               controller: _locationController,
-              decoration: const InputDecoration(
+              decoration:  InputDecoration(
                 labelText: 'Location',
                 border: OutlineInputBorder(),
+                suffixIcon: IconButton(
+                  icon: Icon(Icons.location_on),
+                  onPressed: _selectLocation,
+                ),
               ),
+              readOnly: true,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please select a location';
+                }
+                return null;
+              },
             ),
             const SizedBox(height: 16),
             

@@ -83,6 +83,18 @@ class _TipsSectionState extends State<TipsSection> {
           ),
         ],
       ),
+      floatingActionButton: selectedCategory.isNotEmpty
+          ? FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  selectedCategory = '';
+                  selectedTreeId = null;
+                });
+              },
+              child: const Icon(Icons.arrow_back),
+              backgroundColor: Colors.green[700],
+            )
+          : null,
     );
   }
 
