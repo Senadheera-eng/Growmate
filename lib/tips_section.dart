@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:Growmate/treatment_steps_widget.dart';
+import 'package:grow_mate_version2/treatment_steps_widget.dart';
 import 'tree_model.dart';
 import 'disease_model.dart';
 
