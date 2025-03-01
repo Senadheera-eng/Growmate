@@ -34,7 +34,7 @@ dependencies:
   provider: ^6.1.2
   shared_preferences: ^2.0.8
   google_maps_flutter: ^2.1.6
-  geolocator: ^9.0.2
+  geolocator: ^10.0.0
   geocoding: ^2.0.5
   table_calendar: ^3.0.9
   intl: ^0.18.1

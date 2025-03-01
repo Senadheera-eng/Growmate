@@ -9,7 +9,6 @@ class LocationPicker extends StatefulWidget {
 }
 
 class _LocationPickerState extends State<LocationPicker> {
-  late GoogleMapController _mapController;
   LatLng _currentPosition = LatLng(0, 0);
   String _currentAddress = '';
 
@@ -20,7 +19,8 @@ class _LocationPickerState extends State<LocationPicker> {
   }
 
   Future<void> _getCurrentLocation() async {
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     setState(() {
       _currentPosition = LatLng(position.latitude, position.longitude);
     });
@@ -28,7 +28,8 @@ class _LocationPickerState extends State<LocationPicker> {
   }
 
   Future<void> _getAddressFromLatLng(LatLng position) async {
-    List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
     Placemark place = placemarks[0];
     setState(() {
       _currentAddress = "${place.locality}, ${place.country}";
@@ -45,9 +46,7 @@ class _LocationPickerState extends State<LocationPicker> {
         children: [
           Expanded(
             child: GoogleMap(
-              onMapCreated: (controller) {
-                _mapController = controller;
-              },
+              onMapCreated: (controller) {},
               initialCameraPosition: CameraPosition(
                 target: _currentPosition,
                 zoom: 14.0,
