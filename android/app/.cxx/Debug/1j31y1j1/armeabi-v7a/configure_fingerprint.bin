@@ -2,54 +2,27 @@ C/C++ Structured LogO
 M
 KC:\src\flutter\packages\flutter_tools\gradle\src\main\groovy\CMakeLists.txtC
 A
-<<<<<<< HEAD
-?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	ÏèàÕ2§ ·â€ÅÔ2q
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	ã²¡’Õ2§ ·â€ÅÔ2q
 o
-mE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\additional_project_files.txt	ÏèàÕ2 ¤ä¹‹Õ2n
+mE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\additional_project_files.txt	ã²¡’Õ2 ‚·þ‘Õ2n
 l
-jE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\android_gradle_build.json	ÏèàÕ2Å ¨ä¹‹Õ2s
+jE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\android_gradle_build.json	ã²¡’Õ2Å …·þ‘Õ2s
 q
-oE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\android_gradle_build_mini.json	ÏèàÕ2Ü «ä¹‹Õ2`
+oE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\android_gradle_build_mini.json	ã²¡’Õ2Ü ‡·þ‘Õ2`
 ^
-\E:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build.ninja	ÏèàÕ2üª àã¹‹Õ2d
+\E:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build.ninja	ã²¡’Õ2üª œ¶þ‘Õ2d
 b
-`E:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build.ninja.txt	ÏèàÕ2i
+`E:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build.ninja.txt	ã²¡’Õ2i
 g
-eE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build_file_index.txt	ÏèàÕ2K ­ä¹‹Õ2j
+eE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build_file_index.txt	ã²¡’Õ2K ‰·þ‘Õ2j
 h
-fE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\compile_commands.json	ÑèàÕ2	n
+fE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\compile_commands.json	ã²¡’Õ2	n
 l
-jE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\compile_commands.json.bin	ÑèàÕ2
+jE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\compile_commands.json.bin	ã²¡’Õ2
 t
 r
-pE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\metadata_generation_command.txt	ÑèàÕ2ñ ¬ä¹‹Õ2g
+pE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\metadata_generation_command.txt	ã²¡’Õ2ñ ‡·þ‘Õ2g
 e
-cE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\prefab_config.json	ÑèàÕ2( ¬ä¹‹Õ2l
+cE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\prefab_config.json	ã²¡’Õ2( ˆ·þ‘Õ2l
 j
-hE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\symbol_folder_index.txt	ÑèàÕ2_ ­ä¹‹Õ2
-=======
-?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	ŠÊšÕ2§ ·â€ÅÔ2q
-o
-mE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\additional_project_files.txt	ŠÊšÕ2 ¤ä¹‹Õ2n
-l
-jE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\android_gradle_build.json	ŠÊšÕ2Å ¨ä¹‹Õ2s
-q
-oE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\android_gradle_build_mini.json	ŠÊšÕ2Ü «ä¹‹Õ2`
-^
-\E:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build.ninja	ŠÊšÕ2üª àã¹‹Õ2d
-b
-`E:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build.ninja.txt	ŠÊšÕ2i
-g
-eE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\build_file_index.txt	ŠÊšÕ2K ­ä¹‹Õ2j
-h
-fE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\compile_commands.json	ŠÊšÕ2	n
-l
-jE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\compile_commands.json.bin	ŠÊšÕ2
-t
-r
-pE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\metadata_generation_command.txt	ŠÊšÕ2ñ ¬ä¹‹Õ2g
-e
-cE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\prefab_config.json	ŠÊšÕ2( ¬ä¹‹Õ2l
-j
-hE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\symbol_folder_index.txt	ŠÊšÕ2_ ­ä¹‹Õ2
->>>>>>> parent of cfaf392 (update pubspec.yaml)
+hE:\Education\Udemy\GrowMate\Growmate\android\app\.cxx\Debug\1j31y1j1\armeabi-v7a\symbol_folder_index.txt	ã²¡’Õ2_ ˆ·þ‘Õ2
