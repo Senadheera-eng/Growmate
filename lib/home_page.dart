@@ -5,6 +5,7 @@ import 'my_trees_section.dart';
 import 'tips_section.dart';
 import 'settings_section.dart';
 import 'login_page.dart';
+import 'tree_dashboard_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -28,6 +29,7 @@ class _HomePageState extends State<HomePage> {
     DragAndDropSection(),
     MyTreesSection(),
     TipsSection(),
+    TreeDashboardPage(),
     SettingsSection(
       onThemeChange: (bool value) {},
     ),
@@ -159,6 +161,10 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.eco),
             label: 'My Trees',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.lightbulb),

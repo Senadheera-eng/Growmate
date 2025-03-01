@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="gcm_defaultSenderId" translatable="false">234025044437</string>
+    <string name="google_api_key" translatable="false">AIzaSyCHx5DwNAOPcdxJ6xeMkxSPM6nZ7lwmkkM</string>
+    <string name="google_app_id" translatable="false">1:234025044437:android:ee8a4432b3fa9b92cc955c</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyCHx5DwNAOPcdxJ6xeMkxSPM6nZ7lwmkkM</string>
+    <string name="google_storage_bucket" translatable="false">grow-mate-252dd.firebasestorage.app</string>
+    <string name="project_id" translatable="false">grow-mate-252dd</string>
+</resources>

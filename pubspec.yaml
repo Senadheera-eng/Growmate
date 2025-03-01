@@ -30,6 +30,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  uuid: ^3.0.0  
+  provider: ^6.1.2
+  shared_preferences: ^2.0.8
+  google_maps_flutter: ^2.1.6
+  geolocator: ^10.0.0
+  geocoding: ^2.0.5
+  table_calendar: ^3.0.9
+  intl: ^0.18.1
+  
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -39,6 +48,7 @@ dependencies:
   firebase_auth: ^5.4.0
   cloud_firestore: 5.6.1
   firebase_storage: ^12.4.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
