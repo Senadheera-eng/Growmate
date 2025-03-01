@@ -1,0 +1,2 @@
+E:/Education/Udemy/GrowMate/Growmate/grow_mate_version2/android/app/.cxx/Debug/1r96r4s2/x86/CMakeFiles/edit_cache.dir
+E:/Education/Udemy/GrowMate/Growmate/grow_mate_version2/android/app/.cxx/Debug/1r96r4s2/x86/CMakeFiles/rebuild_cache.dir

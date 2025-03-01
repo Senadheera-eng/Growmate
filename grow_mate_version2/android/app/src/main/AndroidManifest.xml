@@ -12,7 +12,7 @@
             android:value="YOUR_API_KEY"/>
             
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.growmate.Administrity"
             android:exported="true"
             android:launchMode="singleTop"
             android:taskAffinity=""
