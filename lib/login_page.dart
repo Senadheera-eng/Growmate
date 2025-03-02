@@ -167,39 +167,31 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   const SizedBox(height: 20),
                   // App Name
-                  ShaderMask(
-                    blendMode: BlendMode.srcIn,
-                    shaderCallback: (Rect bounds) {
-                      return const LinearGradient(
-                        colors: [Colors.white, Color(0xFFB2FF59)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ).createShader(bounds);
-                    },
-                    child: const Text(
-                      'GrowMate',
-                      style: TextStyle(
-                        fontSize: 46,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                      ),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Grow',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Mate',
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 53, 255, 60),
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+
                   const SizedBox(height: 12),
-                  // Tagline
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: const Text(
-                      'Plant-Companion',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
+
                   const SizedBox(height: 45),
                   // Login Card
                   Container(

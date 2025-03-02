@@ -140,22 +140,26 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                   const SizedBox(height: 16),
                   // App Name
-                  ShaderMask(
-                    blendMode: BlendMode.srcIn,
-                    shaderCallback: (Rect bounds) {
-                      return const LinearGradient(
-                        colors: [Colors.white, Color(0xFFB2FF59)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ).createShader(bounds);
-                    },
-                    child: const Text(
-                      'GrowMate',
-                      style: TextStyle(
-                        fontSize: 38,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 1.5,
-                      ),
+                  Text.rich(
+                    TextSpan(
+                      children: [
+                        TextSpan(
+                          text: 'Grow',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        TextSpan(
+                          text: 'Mate',
+                          style: TextStyle(
+                            color: const Color.fromARGB(255, 53, 255, 60),
+                            fontSize: 40,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 35),
