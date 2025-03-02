@@ -367,8 +367,8 @@ class _HomePageState extends State<HomePage>
         children: [
           _buildNavItem(0, Icons.home_rounded, 'Home'),
           _buildNavItem(1, Icons.eco_rounded, 'Trees'),
-          _buildNavItem(2, Icons.dashboard_rounded, 'Dashboard'),
-          _buildNavItem(3, Icons.lightbulb_outline, 'Tips'),
+          _buildNavItem(2, Icons.lightbulb_outline, 'Tips'),
+          _buildNavItem(3, Icons.dashboard_rounded, 'Dashboard'),
           _buildNavItem(4, Icons.settings_rounded, 'Settings'),
         ],
       ),
