@@ -26,7 +26,8 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> login(BuildContext context) async {
     // Validate inputs
-    if (emailController.text.trim().isEmpty || passwordController.text.isEmpty) {
+    if (emailController.text.trim().isEmpty ||
+        passwordController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please fill in all fields'),
@@ -46,17 +47,16 @@ class _LoginPageState extends State<LoginPage> {
         email: emailController.text.trim(),
         password: passwordController.text,
       );
-      
+
       if (mounted) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
       }
-      
     } on FirebaseAuthException catch (e) {
       String errorMessage;
-      
+
       switch (e.code) {
         case 'wrong-password':
           errorMessage = 'Incorrect password. Please try again.';
@@ -124,12 +124,26 @@ class _LoginPageState extends State<LoginPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                const Text(
-                  'GrowMate',
-                  style: TextStyle(
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Grow',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      TextSpan(
+                        text: 'Mate',
+                        style: TextStyle(
+                          color: const Color.fromARGB(255, 53, 255, 60),
+                          fontSize: 40,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -168,7 +182,9 @@ class _LoginPageState extends State<LoginPage> {
                             prefixIcon: const Icon(Icons.lock),
                             suffixIcon: IconButton(
                               icon: Icon(
-                                _obscureText ? Icons.visibility : Icons.visibility_off,
+                                _obscureText
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
                               ),
                               onPressed: () {
                                 setState(() {
