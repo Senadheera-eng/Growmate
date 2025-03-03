@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
 import 'tree_stats_model.dart';
+import 'tree_model.dart';
 
 class CareCalendarWidget extends StatefulWidget {
   final Map<DateTime, List<TreeActivity>> events;
   final Function(TreeActivity) onEventTap;
-
+  
   const CareCalendarWidget({
     Key? key,
     required this.events,
@@ -22,18 +23,18 @@ class _CareCalendarWidgetState extends State<CareCalendarWidget> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-
+  
   @override
   void initState() {
     super.initState();
     _selectedDay = _focusedDay;
   }
-
+  
   List<TreeActivity> _getEventsForDay(DateTime day) {
     final normalizedDay = DateTime(day.year, day.month, day.day);
     return widget.events[normalizedDay] ?? [];
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -78,8 +79,7 @@ class _CareCalendarWidgetState extends State<CareCalendarWidget> {
           headerStyle: const HeaderStyle(
             formatButtonShowsNext: false,
             titleCentered: true,
-            titleTextStyle:
-                TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            titleTextStyle: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
         const Divider(),
@@ -93,14 +93,14 @@ class _CareCalendarWidgetState extends State<CareCalendarWidget> {
       ],
     );
   }
-
+  
   Widget _buildEventsList(List<TreeActivity> events) {
     if (events.isEmpty) {
       return const Center(
         child: Text('No activities for this day'),
       );
     }
-
+    
     return ListView.builder(
       itemCount: events.length,
       itemBuilder: (context, index) {
@@ -141,7 +141,7 @@ class _CareCalendarWidgetState extends State<CareCalendarWidget> {
       },
     );
   }
-
+  
   Color _getEventColor(String type, bool? successful) {
     if (type == 'care_tip') {
       return Colors.green;
@@ -157,7 +157,7 @@ class _CareCalendarWidgetState extends State<CareCalendarWidget> {
     }
     return Colors.grey;
   }
-
+  
   IconData _getEventIcon(String type) {
     switch (type) {
       case 'care_tip':

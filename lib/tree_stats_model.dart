@@ -655,6 +655,7 @@ class TreeStatsService {
 // tree_stats_model.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 import 'tree_model.dart';
 
 class TreeStats {
@@ -712,7 +713,7 @@ class TreeStatsService {
         .where('treeId', isEqualTo: tree.id)
         .where('userId', isEqualTo: userId)
         .get();
-
+    
     final careTipsCompleted = careTipsSnapshot.docs.length;
 
     // Treatment steps data (only if tree is diseased)
@@ -727,20 +728,16 @@ class TreeStatsService {
           .where('diseaseId', isEqualTo: tree.diseaseId)
           .where('userId', isEqualTo: userId)
           .get();
-
+      
       treatmentStepsCompleted = treatmentProgressSnapshot.docs
-          .where((doc) =>
-              doc.data().containsKey('completedDate') &&
-              doc.data()['completedDate'] != null)
+          .where((doc) => doc.data().containsKey('completedDate') && doc.data()['completedDate'] != null)
           .length;
-
+          
       treatmentStepsInProgress = treatmentProgressSnapshot.docs
-          .where((doc) =>
-              !doc.data().containsKey('completedDate') ||
-              doc.data()['completedDate'] == null)
+          .where((doc) => !doc.data().containsKey('completedDate') || doc.data()['completedDate'] == null)
           .length;
     }
-
+    
     // Get recent activities
     final recentActivities = await _getRecentActivities(tree.id, userId);
 
@@ -753,12 +750,11 @@ class TreeStatsService {
       isDiseased: tree.isDiseased,
     );
   }
-
+  
   // Get recent activities by directly querying completions
-  Future<List<TreeActivity>> _getRecentActivities(
-      String treeId, String userId) async {
+  Future<List<TreeActivity>> _getRecentActivities(String treeId, String userId) async {
     final List<TreeActivity> activities = [];
-
+    
     // Get care tip completions
     final tipCompletions = await _firestore
         .collection('care_tip_completions')
@@ -767,31 +763,29 @@ class TreeStatsService {
         .orderBy('completedDate', descending: true)
         .limit(5)
         .get();
-
+    
     for (var doc in tipCompletions.docs) {
       final data = doc.data();
       if (!data.containsKey('completedDate')) continue;
-
+      
       final date = DateTime.parse(data['completedDate']);
       final tipId = data['tipId'];
-
+      
       // Try to get tip details, but don't fail if we can't
       String tipTitle = 'Care tip completed';
       String tipDescription = 'Care activity was completed';
-
+      
       try {
-        final tipDoc =
-            await _firestore.collection('care_tips').doc(tipId).get();
+        final tipDoc = await _firestore.collection('care_tips').doc(tipId).get();
         if (tipDoc.exists) {
           final tipData = tipDoc.data();
           tipTitle = tipData?['title'] ?? 'Care tip completed';
-          tipDescription =
-              tipData?['description'] ?? 'Care activity was completed';
+          tipDescription = tipData?['description'] ?? 'Care activity was completed';
         }
       } catch (e) {
         // Ignore errors fetching tip details
       }
-
+      
       activities.add(TreeActivity(
         id: doc.id,
         treeId: treeId,
@@ -802,7 +796,7 @@ class TreeStatsService {
         successful: true,
       ));
     }
-
+    
     // Get treatment completions
     final treatmentProgress = await _firestore
         .collection('treatment_progress')
@@ -811,18 +805,17 @@ class TreeStatsService {
         .orderBy('startedDate', descending: true)
         .limit(5)
         .get();
-
+    
     for (var doc in treatmentProgress.docs) {
       final data = doc.data();
       final stepId = data['stepId'];
-
+      
       // Try to get step details
       String stepTitle = 'Treatment step';
       String stepDescription = 'Treatment activity';
-
+      
       try {
-        final stepDoc =
-            await _firestore.collection('treatment_steps').doc(stepId).get();
+        final stepDoc = await _firestore.collection('treatment_steps').doc(stepId).get();
         if (stepDoc.exists) {
           final stepData = stepDoc.data();
           stepTitle = 'Treatment Step ${stepData?['stepNumber'] ?? ''}';
@@ -831,18 +824,16 @@ class TreeStatsService {
       } catch (e) {
         // Ignore errors fetching step details
       }
-
+      
       // Check if this is a completed step
       if (data.containsKey('completedDate') && data['completedDate'] != null) {
         final completedDate = DateTime.parse(data['completedDate']);
         final outcomeAchieved = data['outcomeAchieved'] as bool? ?? false;
-
+        
         activities.add(TreeActivity(
           id: '${doc.id}_complete',
           treeId: treeId,
-          title: outcomeAchieved
-              ? 'Completed $stepTitle successfully'
-              : 'Completed $stepTitle (needs attention)',
+          title: outcomeAchieved ? 'Completed $stepTitle successfully' : 'Completed $stepTitle (needs attention)',
           description: stepDescription,
           date: completedDate,
           type: 'treatment_complete',
@@ -851,7 +842,7 @@ class TreeStatsService {
       } else {
         // This is a step in progress
         final startedDate = DateTime.parse(data['startedDate']);
-
+        
         activities.add(TreeActivity(
           id: '${doc.id}_start',
           treeId: treeId,
@@ -863,54 +854,52 @@ class TreeStatsService {
         ));
       }
     }
-
+    
     // Sort all activities by date
     activities.sort((a, b) => b.date.compareTo(a.date));
-
+    
     // Return the most recent activities
     return activities.take(5).toList();
   }
-
+  
   // Get stats summary without requiring complex queries
   Future<Map<String, dynamic>> getStatsSummary() async {
     final userId = _auth.currentUser?.uid;
     if (userId == null) {
       throw Exception('User not authenticated');
     }
-
+    
     // Get all trees
     final treesSnapshot = await _firestore
         .collection('trees')
         .where('userId', isEqualTo: userId)
         .get();
-
+    
     final totalTrees = treesSnapshot.docs.length;
     final healthyTrees = treesSnapshot.docs
         .where((doc) => !(doc.data()['isDiseased'] ?? false))
         .length;
     final diseasedTrees = totalTrees - healthyTrees;
-
+    
     // Get all care tips completions
     final careTipsSnapshot = await _firestore
         .collection('care_tip_completions')
         .where('userId', isEqualTo: userId)
         .get();
-
+    
     final totalCareTipsCompleted = careTipsSnapshot.docs.length;
-
+    
     // Get all treatment progress info
     final treatmentSnapshot = await _firestore
         .collection('treatment_progress')
         .where('userId', isEqualTo: userId)
         .get();
-
+    
     final totalTreatmentsStarted = treatmentSnapshot.docs.length;
     final totalTreatmentsCompleted = treatmentSnapshot.docs
-        .where((doc) =>
-            doc.data().containsKey('completedDate') &&
-            doc.data()['completedDate'] != null)
+        .where((doc) => doc.data().containsKey('completedDate') && doc.data()['completedDate'] != null)
         .length;
-
+    
     return {
       'totalTrees': totalTrees,
       'healthyTrees': healthyTrees,

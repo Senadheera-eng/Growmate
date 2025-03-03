@@ -231,6 +231,9 @@ class TreeDetailPage extends StatelessWidget {
     );
   }
 
+  /* String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  } */
 }
 
 class _DetailRow extends StatelessWidget {

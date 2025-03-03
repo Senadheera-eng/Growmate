@@ -642,6 +642,8 @@ class _TreeDashboardPageState extends State<TreeDashboardPage>
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TreeStatsService _statsService = TreeStatsService();
 
+  bool _isLoadingEvents = false;
+  Map<String, dynamic>? _summaryStats;
   DateTime _selectedDate = DateTime.now();
 
   @override
@@ -659,7 +661,10 @@ class _TreeDashboardPageState extends State<TreeDashboardPage>
 
   Future<void> _loadSummaryStats() async {
     try {
-      setState(() {});
+      final stats = await _statsService.getStatsSummary();
+      setState(() {
+        _summaryStats = stats;
+      });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error loading summary stats: $e')),
@@ -762,8 +767,8 @@ class _TreeDashboardPageState extends State<TreeDashboardPage>
           decoration: BoxDecoration(
             border: Border(bottom: BorderSide(color: Colors.grey[300]!)),
           ),
-          child: const Row(
-            children: [
+          child: Row(
+            children: const [
               Expanded(
                   child: Text('Sun',
                       textAlign: TextAlign.center,
@@ -881,7 +886,6 @@ class _TreeDashboardPageState extends State<TreeDashboardPage>
       ],
     );
   }
-
   // Updated _buildStatsTab method with pie chart AND existing stats card
   Widget _buildStatsTab() {
     final userId = _auth.currentUser?.uid;
@@ -1251,10 +1255,8 @@ class _TreeDashboardPageState extends State<TreeDashboardPage>
                         .where('userId', isEqualTo: _auth.currentUser?.uid),
                     totalGetter: () => _getTotalTreatmentSteps(tree.diseaseId!),
                     completedFilter: (doc) =>
-                        (doc.data() as Map<String, dynamic>)
-                            .containsKey('completedDate') &&
-                        (doc.data() as Map<String, dynamic>)['completedDate'] !=
-                            null,
+                        (doc.data() as Map<String, dynamic>).containsKey('completedDate') &&
+                        (doc.data() as Map<String, dynamic>)['completedDate'] != null,
                   ),
                 ],
               ],
@@ -2156,6 +2158,111 @@ class _TreeDashboardPageState extends State<TreeDashboardPage>
   }
 
   // Build simplified tree card that won't overflow
+  Widget _buildSimpleTreeCard(TreeModel tree) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(12),
+        leading: tree.photoUrls.isNotEmpty
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  tree.photoUrls[0],
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 50,
+                    height: 50,
+                    color: Colors.grey[200],
+                    child: const Icon(Icons.broken_image),
+                  ),
+                ),
+              )
+            : Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: Colors.grey[200],
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.eco, color: Colors.grey),
+              ),
+        title: Text(
+          tree.name,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${tree.ageInMonths} months old'),
+            if (tree.isDiseased)
+              Container(
+                margin: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.red[100],
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: const Text(
+                  'Diseased',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.red,
+                  ),
+                ),
+              ),
+          ],
+        ),
+        trailing: StreamBuilder<QuerySnapshot>(
+          stream: _firestore
+              .collection('care_tip_completions')
+              .where('treeId', isEqualTo: tree.id)
+              .where('userId', isEqualTo: _auth.currentUser?.uid)
+              .snapshots(),
+          builder: (context, snapshot) {
+            final completedCount =
+                snapshot.hasData ? snapshot.data!.docs.length : 0;
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  '$completedCount',
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green,
+                  ),
+                ),
+                const Text(
+                  'activities',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TreeDetailPage(tree: tree),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   // Get event color based on type
   Color _getEventColor(String type, bool? successful) {
