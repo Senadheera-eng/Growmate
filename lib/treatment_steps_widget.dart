@@ -278,45 +278,6 @@ class TreatmentStepsWidget extends StatelessWidget {
     }
   }
 
-  /* Future<void> _completeStep(
-    BuildContext context,
-    TreatmentStepProgress progress,
-    bool outcomeAchieved,
-  ) async {
-    try {
-      await _stepService.completeStep(
-        progressId: progress.id,
-        outcomeAchieved: outcomeAchieved,
-      );
-
-      final allStepsCompleted = await _stepService.verifyAllStepsCompleted(
-        progress.treeId,
-        progress.diseaseId,
-      );
-
-      if (allStepsCompleted) {
-        await _stepService.markTreeAsHealthy(progress.treeId);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('All treatment steps completed. Tree is now healthy!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              outcomeAchieved
-                  ? 'Step completed successfully'
-                  : 'Step completed. Check alternative tips',
-            ),
-            backgroundColor: outcomeAchieved ? Colors.green : Colors.orange,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error completing step: $e')),
-      );
-    }
-  } */
  // In TreatmentStepsWidget class
 Future<void> _completeStep(
   BuildContext context,
