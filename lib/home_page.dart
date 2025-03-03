@@ -44,9 +44,9 @@ class _HomePageState extends State<HomePage>
 
   final List<Widget> _pages = [
     DragAndDropSection(),
-    MyTreesSection(),
-    TipsSection(),
-    TreeDashboardPage(),
+    const MyTreesSection(),
+    const TipsSection(),
+    const TreeDashboardPage(),
     SettingsSection(
       onThemeChange: (bool value) {},
     ),
@@ -105,10 +105,9 @@ class _HomePageState extends State<HomePage>
         stream: _auth.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(
-                valueColor:
-                    AlwaysStoppedAnimation<Color>(const Color(0xFF00C853)),
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
               ),
             );
           }
@@ -223,7 +222,7 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           const SizedBox(width: 10),
-          Text.rich(
+          const Text.rich(
             TextSpan(
               children: [
                 TextSpan(
@@ -237,7 +236,7 @@ class _HomePageState extends State<HomePage>
                 TextSpan(
                   text: 'Mate',
                   style: TextStyle(
-                    color: const Color.fromARGB(255, 53, 255, 60),
+                    color: Color.fromARGB(255, 53, 255, 60),
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -343,10 +342,10 @@ class _HomePageState extends State<HomePage>
       height: 70,
       margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
-            const Color(0xFF00C853),
-            const Color(0xFF1B5E20),
+            Color(0xFF00C853),
+            Color(0xFF1B5E20),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
