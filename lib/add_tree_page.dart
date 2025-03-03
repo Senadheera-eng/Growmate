@@ -50,10 +50,9 @@ class _AddTreePageState extends State<AddTreePage> {
   }
 
   Future<void> _loadDiseases() async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('diseases')
-        .get();
-    
+    final snapshot =
+        await FirebaseFirestore.instance.collection('diseases').get();
+
     setState(() {
       _diseases = snapshot.docs
           .map((doc) => DiseaseModel.fromMap({...doc.data(), 'id': doc.id}))
@@ -119,7 +118,7 @@ class _AddTreePageState extends State<AddTreePage> {
     try {
       final String userId = FirebaseAuth.instance.currentUser!.uid;
       final List<String> photoUrls = await _uploadImages();
-      
+
       final tree = TreeModel(
         id: const Uuid().v4(),
         name: _nameController.text,
@@ -156,215 +155,570 @@ class _AddTreePageState extends State<AddTreePage> {
   }
 
   Widget _buildDiseaseSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SwitchListTile(
-          title: const Text('Is the tree diseased?'),
-          value: _isDiseased,
-          onChanged: (value) {
-            setState(() {
-              _isDiseased = value;
-              if (!value) {
-                _selectedDiseaseId = null;
-                _diseaseDescController.clear();
-              }
-            });
-          },
-        ),
-        if (_isDiseased) ...[
-          const SizedBox(height: 16),
-          DropdownButtonFormField<String>(
-            decoration: const InputDecoration(
-              labelText: 'Select Disease',
-              border: OutlineInputBorder(),
-            ),
-            value: _selectedDiseaseId,
-            items: _diseases.map((disease) {
-              return DropdownMenuItem(
-                value: disease.id,
-                child: Text(disease.name),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedDiseaseId = value;
-                if (value != null) {
-                  final disease = _diseases.firstWhere((d) => d.id == value);
-                  _diseaseDescController.text = disease.description;
-                }
-              });
-            },
-            validator: (value) => _isDiseased && value == null
-                ? 'Please select a disease'
-                : null,
-          ),
-          const SizedBox(height: 16),
-          TextFormField(
-            controller: _diseaseDescController,
-            decoration: const InputDecoration(
-              labelText: 'Additional Disease Notes',
-              border: OutlineInputBorder(),
-            ),
-            maxLines: 3,
-            validator: (value) => _isDiseased && (value?.isEmpty ?? true)
-                ? 'Please add disease notes'
-                : null,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
           ),
         ],
-      ],
+        border: Border.all(
+          color: Colors.grey.shade200,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.healing,
+                color: Color(0xFF00C853),
+                size: 24,
+              ),
+              const SizedBox(width: 10),
+              const Text(
+                'Tree Health Status',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF424242),
+                ),
+              ),
+              const Spacer(),
+              Switch(
+                value: _isDiseased,
+                onChanged: (value) {
+                  setState(() {
+                    _isDiseased = value;
+                    if (!value) {
+                      _selectedDiseaseId = null;
+                      _diseaseDescController.clear();
+                    }
+                  });
+                },
+                activeColor: const Color(0xFF00C853),
+              ),
+            ],
+          ),
+          _isDiseased
+              ? const Padding(
+                  padding: EdgeInsets.only(left: 34),
+                  child: Text(
+                    'Tree is diseased',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.redAccent,
+                    ),
+                  ),
+                )
+              : const Padding(
+                  padding: EdgeInsets.only(left: 34),
+                  child: Text(
+                    'Tree is healthy',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFF00C853),
+                    ),
+                  ),
+                ),
+          if (_isDiseased) ...[
+            const SizedBox(height: 16),
+            DropdownButtonFormField<String>(
+              decoration: InputDecoration(
+                labelText: 'Select Disease',
+                prefixIcon:
+                    const Icon(Icons.bug_report, color: Colors.redAccent),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF00C853)),
+                ),
+                fillColor: Colors.white,
+                filled: true,
+              ),
+              value: _selectedDiseaseId,
+              items: _diseases.map((disease) {
+                return DropdownMenuItem(
+                  value: disease.id,
+                  child: Text(disease.name),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedDiseaseId = value;
+                  if (value != null) {
+                    final disease = _diseases.firstWhere((d) => d.id == value);
+                    _diseaseDescController.text = disease.description;
+                  }
+                });
+              },
+              validator: (value) => _isDiseased && value == null
+                  ? 'Please select a disease'
+                  : null,
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _diseaseDescController,
+              decoration: InputDecoration(
+                labelText: 'Additional Disease Notes',
+                prefixIcon: const Icon(Icons.note_add, color: Colors.orange),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: const BorderSide(color: Color(0xFF00C853)),
+                ),
+                fillColor: Colors.white,
+                filled: true,
+              ),
+              maxLines: 3,
+              validator: (value) => _isDiseased && (value?.isEmpty ?? true)
+                  ? 'Please add disease notes'
+                  : null,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImagePickerSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.grey.shade200,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: const [
+              Icon(
+                Icons.photo_library,
+                color: Color(0xFF00C853),
+                size: 24,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Tree Photos',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF424242),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Padding(
+            padding: EdgeInsets.only(left: 34),
+            child: Text(
+              'Add up to 3 photos of your tree',
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _selectedImages.length + 1,
+              itemBuilder: (context, index) {
+                if (index == _selectedImages.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: InkWell(
+                      onTap: _selectedImages.length < 3 ? _pickImage : null,
+                      child: Container(
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF00C853).withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFF00C853).withOpacity(0.3),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.add_photo_alternate,
+                              color: _selectedImages.length < 3
+                                  ? const Color(0xFF00C853)
+                                  : Colors.grey.withOpacity(0.5),
+                              size: 36,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '${_selectedImages.length}/3',
+                              style: TextStyle(
+                                color: _selectedImages.length < 3
+                                    ? const Color(0xFF00C853)
+                                    : Colors.grey.withOpacity(0.5),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                            color: const Color(0xFF00C853).withOpacity(0.3),
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.file(
+                            _selectedImages[index],
+                            fit: BoxFit.cover,
+                            height: 120,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              _selectedImages.removeAt(index);
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: const BoxDecoration(
+                              color: Colors.red,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
-        title: const Text('Add New Tree'),
-        backgroundColor: Colors.teal,
+        title: const Text(
+          'Add New Tree',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFF00C853),
+        elevation: 0,
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Adding a Tree'),
+                  content: const Text(
+                    'Add details about your coconut tree. Be sure to include at least one photo and accurate information about its age and health status.',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('OK'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.fromLTRB(20, 30, 20, 40),
           children: [
-            // Image picker section
-            Container(
-              height: 120,
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey),
-                borderRadius: BorderRadius.circular(8),
+            _buildHeader(),
+            const SizedBox(height: 24),
+            _buildImagePickerSection(),
+            const SizedBox(height: 24),
+            _buildInfoSection(),
+            const SizedBox(height: 24),
+            _buildDiseaseSection(),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              onPressed: _isLoading ? null : _saveTree,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00C853),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                elevation: 2,
               ),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: _selectedImages.length + 1,
-                itemBuilder: (context, index) {
-                  if (index == _selectedImages.length) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: _selectedImages.length < 3 ? _pickImage : null,
-                        child: Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Icon(
-                            Icons.add_photo_alternate,
-                            color: _selectedImages.length < 3
-                                ? Colors.grey
-                                : Colors.grey.withOpacity(0.5),
-                          ),
-                        ),
+              child: _isLoading
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
                       ),
-                    );
-                  }
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Stack(
-                      children: [
-                        Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.file(
-                              _selectedImages[index],
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          right: 0,
-                          child: IconButton(
-                            icon: const Icon(Icons.remove_circle),
-                            color: Colors.red,
-                            onPressed: () {
-                              setState(() {
-                                _selectedImages.removeAt(index);
-                              });
-                            },
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.eco),
+                        SizedBox(width: 8),
+                        Text(
+                          'Save Tree',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _nameController,
-              decoration: const InputDecoration(
-                labelText: 'Tree Name',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) =>
-                  value?.isEmpty ?? true ? 'Please enter a name' : null,
-            ),
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _ageController,
-              decoration: const InputDecoration(
-                labelText: 'Age (months)',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value?.isEmpty ?? true) return 'Please enter age';
-                final age = int.tryParse(value!);
-                if (age == null) return 'Please enter a valid number';
-                if (age < 1 || age > 6) return 'Age must be between 1 and 6 months';
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            
-            TextFormField(
-              controller: _locationController,
-              decoration:  InputDecoration(
-                labelText: 'Location',
-                border: OutlineInputBorder(),
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.location_on),
-                  onPressed: _selectLocation,
-                ),
-              ),
-              readOnly: true,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please select a location';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            
-            _buildDiseaseSection(),
-            
-            const SizedBox(height: 24),
-            
-            ElevatedButton(
-              onPressed: _isLoading ? null : _saveTree,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: _isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text(
-                      'Save Tree',
-                      style: TextStyle(fontSize: 16),
-                    ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          colors: [
+            Color(0xFF00C853),
+            Color(0xFF1B5E20),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF00C853).withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          const CircleAvatar(
+            backgroundColor: Colors.white24,
+            radius: 22,
+            child: Icon(
+              Icons.eco,
+              color: Colors.white,
+              size: 24,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'New Coconut Tree',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Add a new tree to your collection',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            spreadRadius: 1,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        border: Border.all(
+          color: Colors.grey.shade200,
+          width: 1,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: const [
+              Icon(
+                Icons.info,
+                color: Color(0xFF00C853),
+                size: 24,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Basic Information',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF424242),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _nameController,
+            decoration: InputDecoration(
+              labelText: 'Tree Name',
+              prefixIcon: const Icon(Icons.label, color: Color(0xFF00C853)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFF00C853)),
+              ),
+              fillColor: Colors.white,
+              filled: true,
+            ),
+            validator: (value) =>
+                value?.isEmpty ?? true ? 'Please enter a name' : null,
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _ageController,
+            decoration: InputDecoration(
+              labelText: 'Age (months)',
+              prefixIcon:
+                  const Icon(Icons.calendar_today, color: Color(0xFF00C853)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFF00C853)),
+              ),
+              fillColor: Colors.white,
+              filled: true,
+              helperText: 'Enter age between 1-6 months',
+            ),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value?.isEmpty ?? true) return 'Please enter age';
+              final age = int.tryParse(value!);
+              if (age == null) return 'Please enter a valid number';
+              if (age < 1 || age > 6)
+                return 'Age must be between 1 and 6 months';
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _locationController,
+            decoration: InputDecoration(
+              labelText: 'Location',
+              prefixIcon:
+                  const Icon(Icons.location_on, color: Color(0xFF00C853)),
+              suffixIcon: IconButton(
+                icon: const Icon(Icons.map, color: Colors.blue),
+                onPressed: _selectLocation,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: const BorderSide(color: Color(0xFF00C853)),
+              ),
+              fillColor: Colors.white,
+              filled: true,
+            ),
+            readOnly: true,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a location';
+              }
+              return null;
+            },
+          ),
+        ],
       ),
     );
   }

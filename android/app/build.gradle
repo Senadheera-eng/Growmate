@@ -14,12 +14,12 @@ android {
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 
     defaultConfig {
@@ -44,9 +44,4 @@ android {
 
 flutter {
     source = "../.."
-}
-
-dependencies {
-    // Add the Firebase dependency if you're using FlutterFire
-    implementation platform('com.google.firebase:firebase-bom:32.7.0')
 }
