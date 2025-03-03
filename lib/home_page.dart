@@ -98,6 +98,11 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
+    // Calculate bottom padding to ensure buttons don't overlap with nav bar
+    final bottomPadding =
+        screenHeight * 0.13; // Approximately 13% of screen height
 
     return Scaffold(
       extendBody: true,
@@ -158,10 +163,14 @@ class _HomePageState extends State<HomePage>
                           topRight: Radius.circular(30),
                         ),
                         child: Padding(
-                          padding: const EdgeInsets.only(bottom: 80),
-                          child: FadeTransition(
-                            opacity: _fadeAnimation,
-                            child: _pages[_currentIndex],
+                          padding: EdgeInsets.only(bottom: bottomPadding),
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: FadeTransition(
+                              key: ValueKey<int>(_currentIndex),
+                              opacity: _fadeAnimation,
+                              child: _pages[_currentIndex],
+                            ),
                           ),
                         ),
                       ),
@@ -222,7 +231,7 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           const SizedBox(width: 10),
-          const Text.rich(
+          Text.rich(
             TextSpan(
               children: [
                 TextSpan(
@@ -236,7 +245,7 @@ class _HomePageState extends State<HomePage>
                 TextSpan(
                   text: 'Mate',
                   style: TextStyle(
-                    color: Color.fromARGB(255, 53, 255, 60),
+                    color: const Color.fromARGB(255, 53, 255, 60),
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -245,91 +254,97 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           const Spacer(),
-          // User info container
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1,
+          // User info container - Fixed to prevent overflow
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
               ),
-            ),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 14,
-                  backgroundColor: Colors.white24,
-                  child: Icon(
-                    Icons.person_outline_rounded,
-                    color: Colors.white,
-                    size: 18,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Colors.white24,
+                    child: Icon(
+                      Icons.person_outline_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  currentUser?.email?.split('@')[0] ?? '',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      currentUser?.email?.split('@')[0] ?? '',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 4),
-                PopupMenuButton<String>(
-                  onSelected: _handleAccountAction,
-                  itemBuilder: (BuildContext context) {
-                    return {
-                      'Switch Account',
-                      'Create Account',
-                      'Sign Out',
-                    }.map((String choice) {
-                      IconData iconData;
-                      switch (choice) {
-                        case 'Switch Account':
-                          iconData = Icons.swap_horiz_rounded;
-                          break;
-                        case 'Create Account':
-                          iconData = Icons.person_add_rounded;
-                          break;
-                        case 'Sign Out':
-                          iconData = Icons.logout_rounded;
-                          break;
-                        default:
-                          iconData = Icons.settings;
-                      }
+                  const SizedBox(width: 4),
+                  PopupMenuButton<String>(
+                    onSelected: _handleAccountAction,
+                    itemBuilder: (BuildContext context) {
+                      return {
+                        'Switch Account',
+                        'Create Account',
+                        'Sign Out',
+                      }.map((String choice) {
+                        IconData iconData;
+                        switch (choice) {
+                          case 'Switch Account':
+                            iconData = Icons.swap_horiz_rounded;
+                            break;
+                          case 'Create Account':
+                            iconData = Icons.person_add_rounded;
+                            break;
+                          case 'Sign Out':
+                            iconData = Icons.logout_rounded;
+                            break;
+                          default:
+                            iconData = Icons.settings;
+                        }
 
-                      return PopupMenuItem<String>(
-                        value: choice,
-                        child: Row(
-                          children: [
-                            Icon(
-                              iconData,
-                              size: 18,
-                              color: const Color(0xFF00C853),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              choice,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF424242),
+                        return PopupMenuItem<String>(
+                          value: choice,
+                          child: Row(
+                            children: [
+                              Icon(
+                                iconData,
+                                size: 18,
+                                color: const Color(0xFF00C853),
                               ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList();
-                  },
-                  offset: const Offset(0, 50),
-                  child: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.white,
-                    size: 20,
+                              const SizedBox(width: 12),
+                              Text(
+                                choice,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF424242),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList();
+                    },
+                    offset: const Offset(0, 50),
+                    child: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],
@@ -338,9 +353,13 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildBottomNavigationBar(double screenWidth) {
+    // Make navigation bar bigger
+    final double navBarHeight = 80; // Increased from 70
+    final double horizontalMargin = screenWidth * 0.04; // 4% of screen width
+
     return Container(
-      height: 70,
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+      height: navBarHeight,
+      margin: EdgeInsets.fromLTRB(horizontalMargin, 0, horizontalMargin, 20),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
@@ -359,26 +378,43 @@ class _HomePageState extends State<HomePage>
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildNavItem(0, Icons.home_rounded, 'Home'),
-          _buildNavItem(1, Icons.eco_rounded, 'Trees'),
-          _buildNavItem(2, Icons.lightbulb_outline, 'Tips'),
-          _buildNavItem(3, Icons.dashboard_rounded, 'Dashboard'),
-          _buildNavItem(4, Icons.settings_rounded, 'Settings'),
-        ],
-      ),
+      child: LayoutBuilder(builder: (context, constraints) {
+        final double totalWidth = constraints.maxWidth;
+        final double itemWidth = totalWidth / 5;
+
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+                width: itemWidth,
+                child: _buildNavItem(0, Icons.home_rounded, 'Home')),
+            SizedBox(
+                width: itemWidth,
+                child: _buildNavItem(1, Icons.eco_rounded, 'Trees')),
+            SizedBox(
+                width: itemWidth,
+                child: _buildNavItem(2, Icons.lightbulb_outline, 'Tips')),
+            SizedBox(
+                width: itemWidth,
+                child: _buildNavItem(3, Icons.dashboard_rounded, 'Dash')),
+            SizedBox(
+                width: itemWidth,
+                child: _buildNavItem(4, Icons.settings_rounded, 'Settings')),
+          ],
+        );
+      }),
     );
   }
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final isSelected = _currentIndex == index;
+
     return GestureDetector(
       onTap: () => _changePage(index),
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color:
               isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
@@ -388,22 +424,26 @@ class _HomePageState extends State<HomePage>
               : null,
         ),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Icon(
               icon,
               color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-              size: 24,
+              size: 26, // Increased from 24
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6), // Increased from 4
             Text(
               label,
+              textAlign: TextAlign.center,
               style: TextStyle(
                 color:
                     isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-                fontSize: 12,
+                fontSize: 12, // Increased from 11
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
               ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -412,26 +452,34 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildDetectButtons() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 100),
+    return Container(
+      padding: const EdgeInsets.only(
+          bottom: 120), // Increased to account for larger nav bar
+      width: double.infinity,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          _buildActionButton(
-            icon: Icons.photo_library_rounded,
-            label: "Browse",
-            onTap: () {
-              // Implement browse functionality
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: _buildActionButton(
+              icon: Icons.photo_library_rounded,
+              label: "Browse",
+              onTap: () {
+                // Implement browse functionality
+              },
+            ),
           ),
-          const SizedBox(width: 20),
-          _buildActionButton(
-            icon: Icons.camera_alt_rounded,
-            label: "Take Photo",
-            isPrimary: true,
-            onTap: () {
-              // Implement camera functionality
-            },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: _buildActionButton(
+              icon: Icons.camera_alt_rounded,
+              label: "Take Photo",
+              isPrimary: true,
+              onTap: () {
+                // Implement camera functionality
+              },
+            ),
           ),
         ],
       ),
@@ -444,6 +492,7 @@ class _HomePageState extends State<HomePage>
     bool isPrimary = false,
     required VoidCallback onTap,
   }) {
+    // Bigger buttons with consistent size
     return Material(
       color: isPrimary ? const Color(0xFF00C853) : Colors.white,
       borderRadius: BorderRadius.circular(16),
@@ -454,9 +503,11 @@ class _HomePageState extends State<HomePage>
         onTap: onTap,
         borderRadius: BorderRadius.circular(16),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
           child: Row(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
                 icon,
