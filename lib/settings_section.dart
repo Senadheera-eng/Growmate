@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grow_mate_version2/account_settings_page.dart';
 
 class SettingsSection extends StatelessWidget {
   final ValueChanged<bool> onThemeChange;
@@ -58,7 +59,12 @@ class SettingsSection extends StatelessWidget {
                     subtitle: 'Manage your account information',
                     icon: Icons.account_circle_outlined,
                     onTap: () {
-                      // TODO: Navigate to Account settings
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AccountSettingsPage(),
+                        ),
+                      );
                     },
                   ),
                   _buildDivider(),
