@@ -175,9 +175,7 @@ class _HomePageState extends State<HomePage>
         },
       ),
       bottomNavigationBar: _buildBottomNavigationBar(screenWidth),
-      floatingActionButton: _currentIndex == 0 || _currentIndex == 1
-          ? _buildDetectButtons()
-          : null,
+      floatingActionButton: _currentIndex == 0 ? _buildDetectButtons() : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
