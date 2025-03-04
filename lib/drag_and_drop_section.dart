@@ -10,8 +10,8 @@ class DragAndDropSection extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
             child: Container(
-              height: 300,
-              width: 400,
+              //height: 400,
+              width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -32,19 +32,19 @@ class DragAndDropSection extends StatelessWidget {
                 children: [
                   const SizedBox(height: 30),
                   Container(
-                    width: 50,
-                    height: 50,
+                    width: 60,
+                    height: 80,
                     decoration: BoxDecoration(
                       color: Colors.grey.shade100,
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.image_outlined,
-                      size: 30,
+                      size: 50,
                       color: const Color(0xFF00C853).withOpacity(0.7),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   const Text(
                     'Drag and Drop Your Tree Image Here',
                     textAlign: TextAlign.center,
@@ -63,10 +63,10 @@ class DragAndDropSection extends StatelessWidget {
                       color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 60),
                   Container(
                     width: 250,
-                    height: 70,
+                    height: 80,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: Colors.grey.shade300,
@@ -81,7 +81,7 @@ class DragAndDropSection extends StatelessWidget {
                         children: [
                           Icon(
                             Icons.cloud_upload_outlined,
-                            size: 30,
+                            size: 40,
                             color: const Color(0xFF00C853),
                           ),
                           const SizedBox(height: 12),
