@@ -282,9 +282,9 @@ class _SettingsSectionState extends State<SettingsSection> {
           ),
         ],
       ),
-      child: Row(
+      child: const Row(
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             backgroundColor: Colors.white24,
             radius: 22,
             child: Icon(
@@ -293,11 +293,11 @@ class _SettingsSectionState extends State<SettingsSection> {
               size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
                   'App Settings',
                   style: TextStyle(
@@ -430,11 +430,11 @@ class _SettingsSectionState extends State<SettingsSection> {
         child: InkWell(
           onTap: _handleSignOut,
           borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15),
+          child: const Padding(
+            padding: EdgeInsets.symmetric(vertical: 15),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Icon(
                   Icons.logout_rounded,
                   color: Colors.white,
@@ -812,9 +812,9 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                         ),
                       );
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisSize: MainAxisSize.min,
-                      children: const [
+                      children: [
                         Icon(Icons.lock_outline, size: 18),
                         SizedBox(width: 8),
                         Text('Change Password'),
