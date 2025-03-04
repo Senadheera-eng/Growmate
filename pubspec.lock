@@ -717,7 +717,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.10.1"
-<<<<<<< Updated upstream
   sprintf:
     dependency: transitive
     description:
@@ -726,8 +725,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
-=======
->>>>>>> Stashed changes
   stack_trace:
     dependency: transitive
     description:
@@ -841,9 +838,5 @@ packages:
     source: hosted
     version: "1.1.0"
 sdks:
-<<<<<<< Updated upstream
   dart: ">=3.7.0 <4.0.0"
-=======
-  dart: ">=3.7.0-0 <4.0.0"
->>>>>>> Stashed changes
   flutter: ">=3.24.0"
