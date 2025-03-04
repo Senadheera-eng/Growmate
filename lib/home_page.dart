@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import 'drag_and_drop_section.dart';
 import 'my_trees_section.dart';
 import 'tips_section.dart';
 import 'settings_section.dart';
 import 'login_page.dart';
 import 'tree_dashboard_page.dart';
+import 'tflite_service.dart'; // Import the TFLite service
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -21,6 +24,8 @@ class _HomePageState extends State<HomePage>
   late User? currentUser;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
+  final ImagePicker _picker = ImagePicker();
+  final PlantDiseaseDetector _detector = PlantDiseaseDetector();
 
   @override
   void initState() {
@@ -34,11 +39,13 @@ class _HomePageState extends State<HomePage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
     _animationController.forward();
+    _detector.initialize(); // Initialize the TFLite model
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _detector.dispose(); // Dispose of the TFLite model
     super.dispose();
   }
 
@@ -93,6 +100,389 @@ class _HomePageState extends State<HomePage>
       _animationController.reset();
       _animationController.forward();
     });
+  }
+
+  // Function to pick image from gallery
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1800,
+        maxHeight: 1800,
+      );
+
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        _processImageWithTFLite(imageFile);
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error selecting image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Function to take a photo with the camera
+  Future<void> _takePhoto() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1800,
+        maxHeight: 1800,
+      );
+
+      if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+        _processImageWithTFLite(imageFile);
+      }
+    } catch (e) {
+      print('Error taking photo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error taking photo: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Function to process the image with TFLite
+  Future<void> _processImageWithTFLite(File imageFile) async {
+    // Show a loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Analyzing your plant...',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'This may take a moment',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    try {
+      // Process the image with TFLite
+      final result = await _detector.detectDisease(imageFile);
+
+      // Close the loading dialog
+      Navigator.pop(context);
+
+      // Show the results
+      _showDetectionResults(imageFile, result);
+    } catch (e) {
+      // Close the loading dialog
+      Navigator.pop(context);
+
+      print('Error processing image: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error analyzing image: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // Function to show detection results
+  void _showDetectionResults(File imageFile, Map<String, dynamic> results) {
+    final topResult = results['topResult'];
+    final allResults = results['allResults'] as List<dynamic>;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        maxChildSize: 0.9,
+        minChildSize: 0.5,
+        builder: (_, controller) => Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          padding: const EdgeInsets.all(16),
+          child: ListView(
+            controller: controller,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Detection Results',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1B5E20),
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 16),
+              if (imageFile != null)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.file(
+                    imageFile,
+                    height: 200,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              const SizedBox(height: 24),
+              Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF00C853).withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.local_florist,
+                              color: Color(0xFF00C853),
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Detected Issue',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey.shade600,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  topResult['label'],
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF1B5E20),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color:
+                                  _getConfidenceColor(topResult['confidence'])
+                                      .withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color:
+                                    _getConfidenceColor(topResult['confidence'])
+                                        .withOpacity(0.5),
+                                width: 1,
+                              ),
+                            ),
+                            child: Text(
+                              '${(topResult['confidence'] * 100).toStringAsFixed(1)}%',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: _getConfidenceColor(
+                                    topResult['confidence']),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Treatment Recommendations:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Based on our analysis, we recommend the following treatment options for ${topResult['label']}:',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      _buildTreatmentItem(
+                          Icons.opacity, 'Adjust watering regime'),
+                      _buildTreatmentItem(Icons.wb_sunny_outlined,
+                          'Ensure proper sunlight exposure'),
+                      _buildTreatmentItem(Icons.cleaning_services_outlined,
+                          'Remove affected leaves'),
+                      _buildTreatmentItem(Icons.eco_outlined,
+                          'Apply organic fungicide if needed'),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                'Other Possibilities',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...allResults.skip(1).take(3).map((result) {
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          result['label'],
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${(result['confidence'] * 100).toStringAsFixed(1)}%',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF00C853),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                child: const Text(
+                  'Close',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTreatmentItem(IconData icon, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        children: [
+          Icon(
+            icon,
+            size: 18,
+            color: const Color(0xFF00C853),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.grey.shade800,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Color _getConfidenceColor(double confidence) {
+    if (confidence >= 0.7) {
+      return const Color(0xFF00C853); // Green for high confidence
+    } else if (confidence >= 0.4) {
+      return Colors.orange; // Orange for medium confidence
+    } else {
+      return Colors.red; // Red for low confidence
+    }
   }
 
   @override
@@ -183,8 +573,6 @@ class _HomePageState extends State<HomePage>
         },
       ),
       bottomNavigationBar: _buildBottomNavigationBar(screenWidth),
-      floatingActionButton: _currentIndex == 0 ? _buildDetectButtons() : null,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
@@ -231,7 +619,7 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           const SizedBox(width: 10),
-          Text.rich(
+          const Text.rich(
             TextSpan(
               children: [
                 TextSpan(
@@ -245,7 +633,7 @@ class _HomePageState extends State<HomePage>
                 TextSpan(
                   text: 'Mate',
                   style: TextStyle(
-                    color: const Color.fromARGB(255, 53, 255, 60),
+                    color: Color.fromARGB(255, 53, 255, 60),
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -465,9 +853,7 @@ class _HomePageState extends State<HomePage>
             child: _buildActionButton(
               icon: Icons.photo_library_rounded,
               label: "Browse",
-              onTap: () {
-                // Implement browse functionality
-              },
+              onTap: _pickImageFromGallery, // Connect to the gallery function
             ),
           ),
           Padding(
@@ -476,9 +862,7 @@ class _HomePageState extends State<HomePage>
               icon: Icons.camera_alt_rounded,
               label: "Take Photo",
               isPrimary: true,
-              onTap: () {
-                // Implement camera functionality
-              },
+              onTap: _takePhoto, // Connect to the camera function
             ),
           ),
         ],
