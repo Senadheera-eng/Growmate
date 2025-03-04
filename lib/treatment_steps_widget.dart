@@ -20,13 +20,32 @@ class TreatmentStepsWidget extends StatelessWidget {
       stream: _stepService.getTreatmentSteps(diseaseId),
       builder: (context, stepsSnapshot) {
         if (!stepsSnapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Color(0xFF00C853),
+              strokeWidth: 3,
+            )
+          );
         }
 
         final steps = stepsSnapshot.data!;
         if (steps.isEmpty) {
-          return const Center(
-            child: Text('No treatment steps found for this disease'),
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.9),
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: const Text(
+                'No treatment steps found for this disease',
+                style: TextStyle(
+                  color: Color(0xFF757575),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
           );
         }
 
@@ -92,24 +111,36 @@ class TreatmentStepsWidget extends StatelessWidget {
                   startedDate: DateTime.now(),
                 ));
 
-    return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        data: Theme.of(context).copyWith(
+          dividerColor: Colors.transparent,
+          colorScheme: Theme.of(context).colorScheme.copyWith(
+                primary: const Color(0xFF1B5E20),
+              ),
+        ),
         child: ExpansionTile(
           initiallyExpanded: isCurrent,
+          tilePadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+          expandedCrossAxisAlignment: CrossAxisAlignment.start,
+          childrenPadding: EdgeInsets.zero,
           title: Row(
             children: [
-              CircleAvatar(
-                backgroundColor:
-                    _getStepColor(isCompleted, isCurrent, canStart),
-                child: Text(
-                  step.stepNumber.toString(),
-                  style: const TextStyle(color: Colors.white),
-                ),
-              ),
+              _buildStepAvatar(step, isCompleted, isCurrent, canStart),
               const SizedBox(width: 16),
-              Expanded(
+              Flexible(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -117,18 +148,31 @@ class TreatmentStepsWidget extends StatelessWidget {
                       'Step ${step.stepNumber}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Color(0xFF1B5E20),
                       ),
                     ),
                     if (isCompleted && completedStep.outcomeAchieved != null)
-                      Text(
-                        completedStep.outcomeAchieved == true
-                            ? 'Completed successfully'
-                            : 'Needs attention',
-                        style: TextStyle(
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        margin: const EdgeInsets.only(top: 4),
+                        decoration: BoxDecoration(
                           color: completedStep.outcomeAchieved == true
-                              ? Colors.green
-                              : Colors.orange,
-                          fontSize: 12,
+                              ? const Color(0xFFE8F5E9)
+                              : const Color(0xFFFFF3E0),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Text(
+                          completedStep.outcomeAchieved == true
+                              ? 'Completed successfully'
+                              : 'Needs attention',
+                          style: TextStyle(
+                            color: completedStep.outcomeAchieved == true
+                                ? const Color(0xFF2E7D32)
+                                : const Color(0xFFEF6C00),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                   ],
@@ -137,72 +181,253 @@ class TreatmentStepsWidget extends StatelessWidget {
             ],
           ),
           children: [
-            Padding(
-              padding: const EdgeInsets.all(16),
+            Container(
+              decoration: const BoxDecoration(
+                color: Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
+                ),
+              ),
+              padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    step.instruction,
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Expected Outcome:',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(step.expectedOutcome),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Recommended waiting period: ${step.recommendedDays} days',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  if (!isCompleted && !isCurrent && canStart)
-                    ElevatedButton(
-                      onPressed: () => _startStep(context, step),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: const Color(0xFFE0F2F1),
+                        width: 1.5,
                       ),
-                      child: const Text('Start This Step'),
+                    ),
+                    child: Text(
+                      step.instruction,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        height: 1.5,
+                        color: Color(0xFF424242),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  
+                  // Expected Outcome Section
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFE8F5E9),
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle_outline,
+                              color: Color(0xFF2E7D32),
+                              size: 20,
+                            ),
+                            SizedBox(width: 8),
+                            Text(
+                              'Expected Outcome:',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xFF2E7D32),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          step.expectedOutcome,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            height: 1.4,
+                            color: Color(0xFF424242),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Waiting Period
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: const Color(0xFFB2DFDB),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.timer_outlined,
+                          color: Color(0xFF00897B),
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Wait ${step.recommendedDays} days',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Color(0xFF00897B),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 24),
+                  
+                  // Action Buttons
+                  if (!isCompleted && !isCurrent && canStart)
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () => _startStep(context, step),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF00C853),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          elevation: 3,
+                          shadowColor: const Color(0xFF00C853).withOpacity(0.5),
+                        ),
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.play_arrow_rounded),
+                            SizedBox(width: 8),
+                            Text(
+                              'START THIS STEP',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                letterSpacing: 1,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                     )
                   else if (isCurrent)
                     Column(
                       children: [
-                        Text(
-                          'Started on: ${_formatDate(currentProgress!.startedDate)}',
-                          style: TextStyle(color: Colors.grey[600]),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: const Color(0xFFBBDEFB),
+                              width: 1.5,
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.calendar_today_rounded,
+                                color: Color(0xFF1976D2),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                'Started on: ${_formatDate(currentProgress!.startedDate)}',
+                                style: const TextStyle(
+                                  color: Color(0xFF1976D2),
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
                         Row(
                           children: [
                             Expanded(
-                              child: ElevatedButton(
-                                onPressed: () => _completeStep(
-                                    context, currentProgress, true),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: () => _completeStep(
+                                      context, currentProgress, true),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF00C853),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    elevation: 3,
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.check_circle_outline),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'SUCCESS',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                child: const Text('Outcome Achieved'),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: () => _completeStep(
-                                    context, currentProgress, false),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orange,
+                            const SizedBox(width: 12),
+                                                                Expanded(
+                              child: SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: () => _completeStep(
+                                      context, currentProgress, false),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFFEF6C00),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    elevation: 3,
+                                  ),
+                                  child: FittedBox(
+                                    fit: BoxFit.scaleDown,
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.help_outline),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          'NEED HELP',
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                                child: const Text('Need Help'),
                               ),
                             ),
                           ],
@@ -214,33 +439,103 @@ class TreatmentStepsWidget extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Alternative Tips:',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.orange,
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFFFF3E0),
+                            borderRadius: BorderRadius.circular(15),
+                            border: Border.all(
+                              color: Colors.orange.shade200,
+                              width: 1.5,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        ...step.alternativeTips.map((tip) => Padding(
-                              padding: const EdgeInsets.only(
-                                  left: 16, top: 4, bottom: 4),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Row(
                                 children: [
-                                  const Text('• '),
-                                  Expanded(child: Text(tip)),
+                                  Icon(
+                                    Icons.tips_and_updates_outlined,
+                                    color: Color(0xFFEF6C00),
+                                    size: 20,
+                                  ),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Alternative Tips:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFEF6C00),
+                                      fontSize: 15,
+                                    ),
+                                  ),
                                 ],
                               ),
-                            )),
-                        const SizedBox(height: 16),
-                        Center(
+                              const SizedBox(height: 12),
+                              ...step.alternativeTips.map((tip) => Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 4, top: 6, bottom: 6),
+                                    child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        const Text(
+                                          '•',
+                                          style: TextStyle(
+                                            color: Color(0xFFEF6C00),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Text(
+                                            tip,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              height: 1.4,
+                                              color: Color(0xFF424242),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        SizedBox(
+                          width: double.infinity,
+                          height: 50,
                           child: ElevatedButton(
                             onPressed: () => _retryStep(context, step),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
+                              backgroundColor: const Color(0xFF1976D2),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              elevation: 3,
                             ),
-                            child: const Text('Try Again'),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.refresh_rounded),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'TRY AGAIN',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -254,11 +549,69 @@ class TreatmentStepsWidget extends StatelessWidget {
     );
   }
 
+  Widget _buildStepAvatar(
+    TreatmentStep step,
+    bool isCompleted,
+    bool isCurrent,
+    bool canStart,
+  ) {
+    Color backgroundColor;
+    Color textColor = Colors.white;
+    IconData? icon;
+
+    if (isCompleted) {
+      backgroundColor = const Color(0xFF4CAF50);
+      icon = Icons.check_rounded;
+    } else if (isCurrent) {
+      backgroundColor = const Color(0xFF2196F3);
+      icon = Icons.hourglass_top_rounded;
+    } else if (canStart) {
+      backgroundColor = const Color(0xFFFF9800);
+      icon = null;
+    } else {
+      backgroundColor = const Color(0xFFBDBDBD);
+      textColor = const Color(0xFF757575);
+      icon = null;
+    }
+
+    return Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: backgroundColor.withOpacity(0.4),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Center(
+        child: icon != null
+            ? Icon(
+                icon,
+                color: textColor,
+                size: 22,
+              )
+            : Text(
+                step.stepNumber.toString(),
+                style: TextStyle(
+                  color: textColor,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+      ),
+    );
+  }
+
   Color _getStepColor(bool isCompleted, bool isCurrent, bool canStart) {
-    if (isCompleted) return Colors.green;
-    if (isCurrent) return Colors.blue;
-    if (canStart) return Colors.orange;
-    return Colors.grey;
+    if (isCompleted) return const Color(0xFF4CAF50);
+    if (isCurrent) return const Color(0xFF2196F3);
+    if (canStart) return const Color(0xFFFF9800);
+    return const Color(0xFFBDBDBD);
   }
 
   Future<void> _startStep(BuildContext context, TreatmentStep step) async {
@@ -269,54 +622,25 @@ class TreatmentStepsWidget extends StatelessWidget {
         stepId: step.id,
       );
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Treatment step started')),
+        const SnackBar(
+          content: Text('Treatment step started'),
+          backgroundColor: Color(0xFF4CAF50),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16),
+        ),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error starting step: $e')),
+        SnackBar(
+          content: Text('Error starting step: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+        ),
       );
     }
   }
 
-  /* Future<void> _completeStep(
-    BuildContext context,
-    TreatmentStepProgress progress,
-    bool outcomeAchieved,
-  ) async {
-    try {
-      await _stepService.completeStep(
-        progressId: progress.id,
-        outcomeAchieved: outcomeAchieved,
-      );
-
-      final allStepsCompleted = await _stepService.verifyAllStepsCompleted(
-        progress.treeId,
-        progress.diseaseId,
-      );
-
-      if (allStepsCompleted) {
-        await _stepService.markTreeAsHealthy(progress.treeId);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('All treatment steps completed. Tree is now healthy!')),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              outcomeAchieved
-                  ? 'Step completed successfully'
-                  : 'Step completed. Check alternative tips',
-            ),
-            backgroundColor: outcomeAchieved ? Colors.green : Colors.orange,
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error completing step: $e')),
-      );
-    }
-  } */
  // In TreatmentStepsWidget class
 Future<void> _completeStep(
   BuildContext context,
@@ -343,7 +667,9 @@ Future<void> _completeStep(
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('All treatment steps completed successfully! Tree is now healthy.'),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF4CAF50),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
           ),
         );
       } else {
@@ -351,7 +677,9 @@ Future<void> _completeStep(
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Step completed successfully. Continue with remaining steps.'),
-            backgroundColor: Colors.green,
+            backgroundColor: Color(0xFF4CAF50),
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(16),
           ),
         );
       }
@@ -360,13 +688,20 @@ Future<void> _completeStep(
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Step completed. Check alternative tips and try again.'),
-          backgroundColor: Colors.orange,
+          backgroundColor: Color(0xFFFF9800),
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.all(16),
         ),
       );
     }
   } catch (e) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error completing step: $e')),
+      SnackBar(
+        content: Text('Error completing step: $e'),
+        backgroundColor: Colors.red,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+      ),
     );
   }
 }
@@ -376,7 +711,12 @@ Future<void> _completeStep(
       await _startStep(context, step);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error retrying step: $e')),
+        SnackBar(
+          content: Text('Error retrying step: $e'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(16),
+        ),
       );
     }
   }

@@ -44,9 +44,9 @@ class _HomePageState extends State<HomePage>
 
   final List<Widget> _pages = [
     DragAndDropSection(),
-    const MyTreesSection(),
-    const TipsSection(),
-    const TreeDashboardPage(),
+    MyTreesSection(),
+    TipsSection(),
+    TreeDashboardPage(),
     SettingsSection(
       onThemeChange: (bool value) {},
     ),
@@ -99,20 +99,19 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-
-    // Calculate bottom padding to ensure buttons don't overlap with nav bar
-    final bottomPadding =
-        screenHeight * 0.13; // Approximately 13% of screen height
+    
+    // Calculate bottom padding to ensure content doesn't overlap with nav bar
+    final bottomPadding = screenHeight * 0.10; // Reduced to 10% of screen height
 
     return Scaffold(
-      extendBody: true,
+      extendBody: true, // Important to allow the content to go behind the nav bar
       body: StreamBuilder<User?>(
         stream: _auth.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF00C853)),
+                valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF00C853)),
               ),
             );
           }
@@ -136,7 +135,7 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             child: SafeArea(
-              bottom: false,
+              bottom: false, // Don't apply safe area at bottom since we handle that manually
               child: Column(
                 children: [
                   _buildAppBar(context),
@@ -165,7 +164,7 @@ class _HomePageState extends State<HomePage>
                         child: Padding(
                           padding: EdgeInsets.only(bottom: bottomPadding),
                           child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
+                            duration: const Duration(milliseconds: 250),
                             child: FadeTransition(
                               key: ValueKey<int>(_currentIndex),
                               opacity: _fadeAnimation,
@@ -254,97 +253,91 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           const Spacer(),
-          // User info container - Fixed to prevent overflow
-          Flexible(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.3),
-                  width: 1,
+          // User info container
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: Row(
+              children: [
+                const CircleAvatar(
+                  radius: 14,
+                  backgroundColor: Colors.white24,
+                  child: Icon(
+                    Icons.person_outline_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const CircleAvatar(
-                    radius: 14,
-                    backgroundColor: Colors.white24,
-                    child: Icon(
-                      Icons.person_outline_rounded,
-                      color: Colors.white,
-                      size: 18,
-                    ),
+                const SizedBox(width: 8),
+                Text(
+                  currentUser?.email?.split('@')[0] ?? '',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
                   ),
-                  const SizedBox(width: 8),
-                  Flexible(
-                    child: Text(
-                      currentUser?.email?.split('@')[0] ?? '',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  PopupMenuButton<String>(
-                    onSelected: _handleAccountAction,
-                    itemBuilder: (BuildContext context) {
-                      return {
-                        'Switch Account',
-                        'Create Account',
-                        'Sign Out',
-                      }.map((String choice) {
-                        IconData iconData;
-                        switch (choice) {
-                          case 'Switch Account':
-                            iconData = Icons.swap_horiz_rounded;
-                            break;
-                          case 'Create Account':
-                            iconData = Icons.person_add_rounded;
-                            break;
-                          case 'Sign Out':
-                            iconData = Icons.logout_rounded;
-                            break;
-                          default:
-                            iconData = Icons.settings;
-                        }
+                ),
+                const SizedBox(width: 4),
+                PopupMenuButton<String>(
+                  onSelected: _handleAccountAction,
+                  itemBuilder: (BuildContext context) {
+                    return {
+                      'Switch Account',
+                      'Create Account',
+                      'Sign Out',
+                    }.map((String choice) {
+                      IconData iconData;
+                      switch (choice) {
+                        case 'Switch Account':
+                          iconData = Icons.swap_horiz_rounded;
+                          break;
+                        case 'Create Account':
+                          iconData = Icons.person_add_rounded;
+                          break;
+                        case 'Sign Out':
+                          iconData = Icons.logout_rounded;
+                          break;
+                        default:
+                          iconData = Icons.settings;
+                      }
 
-                        return PopupMenuItem<String>(
-                          value: choice,
-                          child: Row(
-                            children: [
-                              Icon(
-                                iconData,
-                                size: 18,
-                                color: const Color(0xFF00C853),
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Row(
+                          children: [
+                            Icon(
+                              iconData,
+                              size: 18,
+                              color: const Color(0xFF00C853),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              choice,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF424242),
                               ),
-                              const SizedBox(width: 12),
-                              Text(
-                                choice,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF424242),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList();
-                    },
-                    offset: const Offset(0, 50),
-                    child: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white,
-                      size: 20,
-                    ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }).toList();
+                  },
+                  offset: const Offset(0, 50),
+                  child: const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Colors.white,
+                    size: 20,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],
@@ -353,13 +346,14 @@ class _HomePageState extends State<HomePage>
   }
 
   Widget _buildBottomNavigationBar(double screenWidth) {
-    // Make navigation bar bigger
-    final double navBarHeight = 80; // Increased from 70
-    final double horizontalMargin = screenWidth * 0.04; // 4% of screen width
-
+    // Professional navigation bar with proper dimensions
+    final double navBarHeight = 60;
+    final double horizontalMargin = screenWidth * 0.03; // Reduced to 3% for wider nav bar
+    final double bottomMargin = 10; // Reduced bottom margin to position it lower
+    
     return Container(
       height: navBarHeight,
-      margin: EdgeInsets.fromLTRB(horizontalMargin, 0, horizontalMargin, 20),
+      margin: EdgeInsets.fromLTRB(horizontalMargin, 0, horizontalMargin, bottomMargin),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
@@ -369,83 +363,71 @@ class _HomePageState extends State<HomePage>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(25),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00C853).withOpacity(0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: const Color(0xFF00C853).withOpacity(0.25),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: LayoutBuilder(builder: (context, constraints) {
-        final double totalWidth = constraints.maxWidth;
-        final double itemWidth = totalWidth / 5;
-
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-                width: itemWidth,
-                child: _buildNavItem(0, Icons.home_rounded, 'Home')),
-            SizedBox(
-                width: itemWidth,
-                child: _buildNavItem(1, Icons.eco_rounded, 'Trees')),
-            SizedBox(
-                width: itemWidth,
-                child: _buildNavItem(2, Icons.lightbulb_outline, 'Tips')),
-            SizedBox(
-                width: itemWidth,
-                child: _buildNavItem(3, Icons.dashboard_rounded, 'Dash')),
-            SizedBox(
-                width: itemWidth,
-                child: _buildNavItem(4, Icons.settings_rounded, 'Settings')),
-          ],
-        );
-      }),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildNavItem(0, Icons.home_rounded, 'Home'),
+          _buildNavItem(1, Icons.eco_rounded, 'Trees'),
+          _buildNavItem(2, Icons.lightbulb_outline, 'Tips'),
+          _buildNavItem(3, Icons.dashboard_rounded, 'Dash'),
+          _buildNavItem(4, Icons.settings_rounded, 'Settings'),
+        ],
+      ),
     );
   }
 
   Widget _buildNavItem(int index, IconData icon, String label) {
-    final isSelected = _currentIndex == index;
-
-    return GestureDetector(
-      onTap: () => _changePage(index),
-      behavior: HitTestBehavior.opaque,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color:
-              isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
-          borderRadius: BorderRadius.circular(15),
-          border: isSelected
-              ? Border.all(color: Colors.white.withOpacity(0.5), width: 1)
-              : null,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-              size: 26, // Increased from 24
-            ),
-            const SizedBox(height: 6), // Increased from 4
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color:
-                    isSelected ? Colors.white : Colors.white.withOpacity(0.7),
-                fontSize: 12, // Increased from 11
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w400,
+    final bool isSelected = _currentIndex == index;
+    
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _changePage(index),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          decoration: BoxDecoration(
+            color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            border: isSelected
+                ? Border.all(color: Colors.white.withOpacity(0.5), width: 1)
+                : null,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                size: 20,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+              const SizedBox(height: 2),
+              Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  letterSpacing: 0.1,
+                  height: 1.0,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -453,15 +435,13 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildDetectButtons() {
     return Container(
-      padding: const EdgeInsets.only(
-          bottom: 120), // Increased to account for larger nav bar
+      padding: const EdgeInsets.only(bottom: 75), // Adjusted for lower nav bar
       width: double.infinity,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: _buildActionButton(
               icon: Icons.photo_library_rounded,
               label: "Browse",
@@ -471,7 +451,7 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: _buildActionButton(
               icon: Icons.camera_alt_rounded,
               label: "Take Photo",
@@ -492,35 +472,32 @@ class _HomePageState extends State<HomePage>
     bool isPrimary = false,
     required VoidCallback onTap,
   }) {
-    // Bigger buttons with consistent size
     return Material(
       color: isPrimary ? const Color(0xFF00C853) : Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      elevation: 8,
+      borderRadius: BorderRadius.circular(15),
+      elevation: 6,
       shadowColor:
-          isPrimary ? const Color(0xFF00C853).withOpacity(0.5) : Colors.black26,
+          isPrimary ? const Color(0xFF00C853).withOpacity(0.4) : Colors.black12,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(15),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 18),
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(
                 icon,
                 color: isPrimary ? Colors.white : const Color(0xFF00C853),
-                size: 24,
+                size: 22,
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
                   color: isPrimary ? Colors.white : const Color(0xFF424242),
                   fontWeight: FontWeight.w600,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
               ),
             ],

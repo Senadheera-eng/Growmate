@@ -61,9 +61,11 @@ class _TipsSectionState extends State<TipsSection>
               child: _buildTreeDropdown(),
             ),
           ],
+          // This is the key change: Expanded widget with a SingleChildScrollView
           Expanded(
             child: FadeTransition(
               opacity: _fadeAnimation,
+              // Use SingleChildScrollView to make content scrollable
               child: _isSearching ? _buildSearchResults() : _buildMainContent(),
             ),
           ),
@@ -215,6 +217,16 @@ class _TipsSectionState extends State<TipsSection>
               {...doc.data() as Map<String, dynamic>, 'id': doc.id});
         }).toList();
 
+        // Check if selectedTreeId exists in the trees list
+        bool selectedTreeExists =
+            trees.any((tree) => tree.id == selectedTreeId);
+
+        // Reset selectedTreeId if it doesn't exist in the current tree list
+        if (selectedTreeId != null && !selectedTreeExists) {
+          // Use Future.microtask to avoid setState during build
+          Future.microtask(() => setState(() => selectedTreeId = null));
+        }
+
         if (trees.isEmpty) {
           return Container(
             margin: const EdgeInsets.symmetric(vertical: 10),
@@ -271,7 +283,7 @@ class _TipsSectionState extends State<TipsSection>
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
             ),
-            value: selectedTreeId,
+            value: selectedTreeExists ? selectedTreeId : null,
             items: trees.map((tree) {
               return DropdownMenuItem(
                 value: tree.id,
@@ -436,17 +448,11 @@ class _TipsSectionState extends State<TipsSection>
               ),
             );
           }
-          return SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 24),
-            child: _buildDiseaseSpecificTips(tree),
-          );
+          return _buildDiseaseSpecificTips(tree);
         }
 
         // For other categories (healthy trees), show care tips
-        return SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 24),
-          child: _buildCareTips(tree),
-        );
+        return _buildCareTips(tree);
       },
     );
   }
@@ -743,8 +749,11 @@ class _TipsSectionState extends State<TipsSection>
               );
             }
 
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // Use ListView instead of Column to make it scrollable
+            return ListView(
+              padding: EdgeInsets.zero, // Remove default padding
+              shrinkWrap: true, // Take only needed space
+              physics: const AlwaysScrollableScrollPhysics(),
               children: [
                 // Disease Information Card
                 Container(
@@ -1024,8 +1033,9 @@ class _TipsSectionState extends State<TipsSection>
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            shrinkWrap: true,
+            physics: const AlwaysScrollableScrollPhysics(),
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 16, 4, 12),
@@ -1056,183 +1066,176 @@ class _TipsSectionState extends State<TipsSection>
                 ),
               ),
               const SizedBox(height: 8),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: tips.length,
-                itemBuilder: (context, index) {
-                  final tipData = tips[index].data() as Map<String, dynamic>;
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 10,
-                          spreadRadius: 1,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                      border: Border.all(
-                        color: Colors.grey.shade200,
-                        width: 1,
+              ...tips.map((tipDoc) {
+                final tipData = tipDoc.data() as Map<String, dynamic>;
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.05),
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                        offset: const Offset(0, 2),
                       ),
+                    ],
+                    border: Border.all(
+                      color: Colors.grey.shade200,
+                      width: 1,
                     ),
-                    child: StreamBuilder<QuerySnapshot>(
-                      stream: FirebaseFirestore.instance
-                          .collection('care_tip_completions')
-                          .where('tipId', isEqualTo: tips[index].id)
-                          .where('treeId', isEqualTo: tree.id)
-                          .snapshots(),
-                      builder: (context, completionSnapshot) {
-                        final isCompleted = completionSnapshot.hasData &&
-                            completionSnapshot.data!.docs.isNotEmpty;
+                  ),
+                  child: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('care_tip_completions')
+                        .where('tipId', isEqualTo: tipDoc.id)
+                        .where('treeId', isEqualTo: tree.id)
+                        .snapshots(),
+                    builder: (context, completionSnapshot) {
+                      final isCompleted = completionSnapshot.hasData &&
+                          completionSnapshot.data!.docs.isNotEmpty;
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      color: isCompleted
-                                          ? Colors.green.shade100
-                                          : Colors.blue.shade100,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Icon(
-                                      isCompleted
-                                          ? Icons.check_circle_rounded
-                                          : _getTipIcon(tipData['title'] ?? ''),
-                                      color: isCompleted
-                                          ? Colors.green.shade700
-                                          : Colors.blue.shade700,
-                                      size: 24,
-                                    ),
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                    color: isCompleted
+                                        ? Colors.green.shade100
+                                        : Colors.blue.shade100,
+                                    borderRadius: BorderRadius.circular(10),
                                   ),
-                                  const SizedBox(width: 15),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          tipData['title'] ?? '',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.grey.shade800,
-                                            decoration: isCompleted
-                                                ? TextDecoration.lineThrough
-                                                : null,
-                                            decorationColor:
-                                                Colors.green.shade700,
-                                            decorationThickness: 2,
-                                          ),
+                                  child: Icon(
+                                    isCompleted
+                                        ? Icons.check_circle_rounded
+                                        : _getTipIcon(tipData['title'] ?? ''),
+                                    color: isCompleted
+                                        ? Colors.green.shade700
+                                        : Colors.blue.shade700,
+                                    size: 24,
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        tipData['title'] ?? '',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey.shade800,
+                                          decoration: isCompleted
+                                              ? TextDecoration.lineThrough
+                                              : null,
+                                          decorationColor:
+                                              Colors.green.shade700,
+                                          decorationThickness: 2,
                                         ),
-                                        const SizedBox(height: 5),
-                                        Text(
-                                          tipData['description'] ?? '',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.grey.shade600,
-                                            height: 1.4,
-                                          ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        tipData['description'] ?? '',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Colors.grey.shade600,
+                                          height: 1.4,
                                         ),
-                                      ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (!isCompleted)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade50,
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                                border: Border(
+                                  top: BorderSide(color: Colors.grey.shade200),
+                                ),
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () => _markTipAsComplete(
+                                  tipDoc.id,
+                                  tree.id,
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green.shade700,
+                                  foregroundColor: Colors.white,
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                ),
+                                child: const Text(
+                                  'Mark as Complete',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (isCompleted)
+                            Container(
+                              width: double.infinity,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 15, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade50,
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                                border: Border(
+                                  top: BorderSide(color: Colors.green.shade100),
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle_rounded,
+                                    color: Colors.green.shade700,
+                                    size: 18,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Completed',
+                                    style: TextStyle(
+                                      color: Colors.green.shade700,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            if (!isCompleted)
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade50,
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(15),
-                                    bottomRight: Radius.circular(15),
-                                  ),
-                                  border: Border(
-                                    top:
-                                        BorderSide(color: Colors.grey.shade200),
-                                  ),
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: () => _markTipAsComplete(
-                                    tips[index].id,
-                                    tree.id,
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green.shade700,
-                                    foregroundColor: Colors.white,
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                  ),
-                                  child: const Text(
-                                    'Mark as Complete',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            if (isCompleted)
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: Colors.green.shade50,
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(15),
-                                    bottomRight: Radius.circular(15),
-                                  ),
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.green.shade100),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.check_circle_rounded,
-                                      color: Colors.green.shade700,
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Completed',
-                                      style: TextStyle(
-                                        color: Colors.green.shade700,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                          ],
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
+                        ],
+                      );
+                    },
+                  ),
+                );
+              }).toList(),
             ],
           ),
         );
