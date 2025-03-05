@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'login_page.dart';
+import 'help_support_page.dart';
 
 class SettingsSection extends StatefulWidget {
   final ValueChanged<bool> onThemeChange;
