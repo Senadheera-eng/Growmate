@@ -51,21 +51,21 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-              content: const Row(
-                children: [
-                  Icon(Icons.notifications_active, color: Colors.white),
-                  SizedBox(width: 12),
-                  Text('Notification preferences saved'),
-                ],
-              ),
-              backgroundColor: const Color.fromARGB(255, 5, 158, 69),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              duration: const Duration(seconds: 2),
-              margin: const EdgeInsets.all(16),
-            ),
+        content: const Row(
+          children: [
+            Icon(Icons.notifications_active, color: Colors.white),
+            SizedBox(width: 12),
+            Text('Notification preferences saved'),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 5, 158, 69),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        duration: const Duration(seconds: 2),
+        margin: const EdgeInsets.all(16),
+      ),
     );
   }
 
