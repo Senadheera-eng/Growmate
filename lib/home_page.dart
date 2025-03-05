@@ -639,6 +639,7 @@ class _HomePageState extends State<HomePage>
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grow_mate_version2/notification_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'drag_and_drop_section.dart';
 import 'my_trees_section.dart';
@@ -662,7 +663,7 @@ class _HomePageState extends State<HomePage>
   late User? currentUser;
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
-  
+
   // Image detection variables
   File? _selectedImage;
   bool _isProcessing = false;
@@ -673,6 +674,10 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
+
+    // Add this notification refresh
+    _refreshAllNotifications();
+
     currentUser = _auth.currentUser;
     _animationController = AnimationController(
       vsync: this,
@@ -682,9 +687,21 @@ class _HomePageState extends State<HomePage>
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
     _animationController.forward();
-    
+
     // Initialize the TFLite model
     _initModel();
+  }
+
+  // Add this private method to HomePage class
+  Future<void> _refreshAllNotifications() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await NotificationService().refreshAllNotifications();
+      }
+    } catch (e) {
+      print('Error refreshing notifications: $e');
+    }
   }
 
   Future<void> _initModel() async {
@@ -725,7 +742,7 @@ class _HomePageState extends State<HomePage>
     try {
       // Process the image with your model
       final result = await _model.processImage(imageFile);
-      
+
       setState(() {
         _isProcessing = false;
         _resultText = result;
@@ -735,7 +752,7 @@ class _HomePageState extends State<HomePage>
         _isProcessing = false;
         _resultText = "Error: ${e.toString()}";
       });
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error processing image: ${e.toString()}'),
@@ -812,19 +829,22 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    
+
     // Calculate bottom padding to ensure content doesn't overlap with nav bar
-    final bottomPadding = screenHeight * 0.10; // Reduced to 10% of screen height
+    final bottomPadding =
+        screenHeight * 0.10; // Reduced to 10% of screen height
 
     return Scaffold(
-      extendBody: true, // Important to allow the content to go behind the nav bar
+      extendBody:
+          true, // Important to allow the content to go behind the nav bar
       body: StreamBuilder<User?>(
         stream: _auth.authStateChanges(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFF00C853)),
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(const Color(0xFF00C853)),
               ),
             );
           }
@@ -848,7 +868,8 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             child: SafeArea(
-              bottom: false, // Don't apply safe area at bottom since we handle that manually
+              bottom:
+                  false, // Don't apply safe area at bottom since we handle that manually
               child: Column(
                 children: [
                   _buildAppBar(context),
@@ -1060,12 +1081,15 @@ class _HomePageState extends State<HomePage>
   Widget _buildBottomNavigationBar(double screenWidth) {
     // Professional navigation bar with proper dimensions
     final double navBarHeight = 60;
-    final double horizontalMargin = screenWidth * 0.03; // Reduced to 3% for wider nav bar
-    final double bottomMargin = 10; // Reduced bottom margin to position it lower
-    
+    final double horizontalMargin =
+        screenWidth * 0.03; // Reduced to 3% for wider nav bar
+    final double bottomMargin =
+        10; // Reduced bottom margin to position it lower
+
     return Container(
       height: navBarHeight,
-      margin: EdgeInsets.fromLTRB(horizontalMargin, 0, horizontalMargin, bottomMargin),
+      margin: EdgeInsets.fromLTRB(
+          horizontalMargin, 0, horizontalMargin, bottomMargin),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           colors: [
@@ -1099,7 +1123,7 @@ class _HomePageState extends State<HomePage>
 
   Widget _buildNavItem(int index, IconData icon, String label) {
     final bool isSelected = _currentIndex == index;
-    
+
     return Expanded(
       child: GestureDetector(
         onTap: () => _changePage(index),
@@ -1108,7 +1132,8 @@ class _HomePageState extends State<HomePage>
           padding: const EdgeInsets.symmetric(vertical: 6),
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           decoration: BoxDecoration(
-            color: isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+            color:
+                isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
             borderRadius: BorderRadius.circular(14),
             border: isSelected
                 ? Border.all(color: Colors.white.withOpacity(0.5), width: 1)
@@ -1121,7 +1146,8 @@ class _HomePageState extends State<HomePage>
             children: [
               Icon(
                 icon,
-                color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                color:
+                    isSelected ? Colors.white : Colors.white.withOpacity(0.7),
                 size: 20,
               ),
               const SizedBox(height: 2),
@@ -1129,7 +1155,8 @@ class _HomePageState extends State<HomePage>
                 label,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                  color:
+                      isSelected ? Colors.white : Colors.white.withOpacity(0.7),
                   fontSize: 10,
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   letterSpacing: 0.1,

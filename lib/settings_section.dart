@@ -51,13 +51,13 @@ class SettingsSection extends StatelessWidget {
                     subtitle: 'Manage tree care reminders',
                     icon: Icons.notifications_outlined,
                     onTap: () {
-                      /* Navigator.push(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) =>
                               const NotificationSettingsPage(),
                         ),
-                      ); */
+                      );
                     },
                   ),
                   _buildDivider(),

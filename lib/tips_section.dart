@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grow_mate_version2/notification_service.dart';
 import 'package:grow_mate_version2/treatment_steps_widget.dart';
 import 'tree_model.dart';
 import 'disease_model.dart';
@@ -1297,6 +1298,39 @@ class _TipsSectionState extends State<TipsSection>
         'userId': user?.uid,
         'completedDate': DateTime.now().toIso8601String(),
       });
+
+      try {
+        // Get the current tree data
+        final treeDoc = await FirebaseFirestore.instance
+            .collection('trees')
+            .doc(treeId)
+            .get();
+
+        if (treeDoc.exists) {
+          final tree =
+              TreeModel.fromMap({...treeDoc.data()!, 'id': treeDoc.id});
+
+          // Update notifications based on completed tip type
+          final tipDoc = await FirebaseFirestore.instance
+              .collection('care_tips')
+              .doc(tipId)
+              .get();
+
+          if (tipDoc.exists) {
+            final category = tipDoc.data()?['category'];
+
+            if (category == 'watering') {
+              await NotificationService().scheduleWateringReminder(tree);
+            } else if (category == 'fertilization') {
+              await NotificationService().scheduleFertilizationReminder(tree);
+            } else {
+              await NotificationService().scheduleCareTipReminders(tree);
+            }
+          }
+        }
+      } catch (e) {
+        print('Error refreshing care tip notifications: $e');
+      }
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

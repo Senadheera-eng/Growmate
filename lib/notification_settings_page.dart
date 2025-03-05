@@ -1,4 +1,4 @@
-/* // notification_settings_page.dart
+// notification_settings_page.dart
 import 'package:flutter/material.dart';
 import 'notification_service.dart';
 
@@ -6,27 +6,28 @@ class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({Key? key}) : super(key: key);
 
   @override
-  _NotificationSettingsPageState createState() => _NotificationSettingsPageState();
+  _NotificationSettingsPageState createState() =>
+      _NotificationSettingsPageState();
 }
 
 class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
   final NotificationService _notificationService = NotificationService();
-  
+
   bool _isLoading = true;
   bool _wateringReminders = true;
   bool _fertilizationReminders = true;
   bool _careTipsReminders = true;
   bool _treatmentReminders = true;
-  
+
   @override
   void initState() {
     super.initState();
     _loadPreferences();
   }
-  
+
   Future<void> _loadPreferences() async {
     final prefs = await _notificationService.getNotificationPreferences();
-    
+
     setState(() {
       _wateringReminders = prefs['watering'] ?? true;
       _fertilizationReminders = prefs['fertilization'] ?? true;
@@ -35,28 +36,39 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       _isLoading = false;
     });
   }
-  
+
   Future<void> _savePreferences() async {
     setState(() => _isLoading = true);
-    
+
     await _notificationService.saveNotificationPreferences(
       wateringReminders: _wateringReminders,
       fertilizationReminders: _fertilizationReminders,
       careTipsReminders: _careTipsReminders,
       treatmentReminders: _treatmentReminders,
     );
-    
+
     setState(() => _isLoading = false);
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Notification preferences saved'),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
+      SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.notifications_active, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('Notification preferences saved'),
+                ],
+              ),
+              backgroundColor: const Color.fromARGB(255, 5, 158, 69),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              duration: const Duration(seconds: 2),
+              margin: const EdgeInsets.all(16),
+            ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,7 +77,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         backgroundColor: const Color(0xFF00C853),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Color(0xFF00C853)))
+          ? const Center(
+              child: CircularProgressIndicator(color: Color(0xFF00C853)))
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -86,7 +99,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                     ),
                     _buildNotificationSection(
                       title: 'Fertilization Reminders',
-                      subtitle: 'Remind me when it\'s time to fertilize my trees',
+                      subtitle:
+                          'Remind me when it\'s time to fertilize my trees',
                       icon: Icons.eco_rounded,
                       color: Colors.green,
                       value: _fertilizationReminders,
@@ -106,7 +120,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                     ),
                     _buildNotificationSection(
                       title: 'Treatment Reminders',
-                      subtitle: 'Remind me to continue treatment steps for diseased trees',
+                      subtitle:
+                          'Remind me to continue treatment steps for diseased trees',
                       icon: Icons.healing_rounded,
                       color: Colors.red,
                       value: _treatmentReminders,
@@ -118,6 +133,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                     _buildSaveButton(),
                     const SizedBox(height: 16),
                     _buildRefreshButton(),
+                    const SizedBox(height: 16),
+                    _buildTestNotificationButton(),
                     const SizedBox(height: 30),
                     _buildNotificationInfo(),
                   ],
@@ -126,7 +143,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             ),
     );
   }
-  
+
   Widget _buildNotificationSection({
     required String title,
     required String subtitle,
@@ -182,7 +199,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ),
     );
   }
-  
+
   Widget _buildSaveButton() {
     return Container(
       width: double.infinity,
@@ -225,7 +242,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ),
     );
   }
-  
+
   Widget _buildRefreshButton() {
     return Container(
       width: double.infinity,
@@ -242,12 +259,23 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           setState(() => _isLoading = true);
           await _notificationService.refreshAllNotifications();
           setState(() => _isLoading = false);
-          
+
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('All notifications have been refreshed'),
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.notifications_active, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('All notifications have been refreshed'),
+                ],
+              ),
+              backgroundColor: const Color.fromARGB(255, 5, 158, 69),
               behavior: SnackBarBehavior.floating,
-              duration: Duration(seconds: 2),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              duration: const Duration(seconds: 2),
+              margin: const EdgeInsets.all(16),
             ),
           );
         },
@@ -272,7 +300,66 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ),
     );
   }
-  
+
+  Widget _buildTestNotificationButton() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.blue.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.blue.shade300,
+          width: 1,
+        ),
+      ),
+      child: TextButton.icon(
+        onPressed: () async {
+          // Schedule a notification 5 seconds from now
+          final notificationTime = DateTime.now().add(Duration(seconds: 5));
+
+          await NotificationService().scheduleTestNotification();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Row(
+                children: [
+                  Icon(Icons.notifications_active, color: Colors.white),
+                  SizedBox(width: 12),
+                  Text('Test notification scheduled Now!'),
+                ],
+              ),
+              backgroundColor: const Color.fromARGB(255, 5, 158, 69),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              duration: const Duration(seconds: 2),
+              margin: const EdgeInsets.all(16),
+            ),
+          );
+        },
+        icon: const Icon(
+          Icons.notifications_active,
+          color: Colors.blue,
+        ),
+        label: const Text(
+          'Test Notification Now',
+          style: TextStyle(
+            color: Colors.blue,
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+          ),
+        ),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildNotificationInfo() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -322,7 +409,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ),
     );
   }
-  
+
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -388,4 +475,4 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
       ),
     );
   }
-} */
+}
