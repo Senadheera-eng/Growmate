@@ -1197,6 +1197,8 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
                               _updatePrivacySetting('locationEnabled', value),
                           title: const Text('Enable Location'),
                           activeColor: const Color(0xFF00C853),
+                          activeTrackColor:
+                              const Color(0xFF00C853).withOpacity(0.3),
                         ),
                       ],
                     ),
@@ -1237,6 +1239,8 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
                               'analyticsSharingEnabled', value),
                           title: const Text('Share Analytics'),
                           activeColor: const Color(0xFF00C853),
+                          activeTrackColor:
+                              const Color(0xFF00C853).withOpacity(0.3),
                         ),
                       ],
                     ),
@@ -1277,6 +1281,8 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
                               'allowDataCollection', value),
                           title: const Text('Allow Data Collection'),
                           activeColor: const Color(0xFF00C853),
+                          activeTrackColor:
+                              const Color(0xFF00C853).withOpacity(0.3),
                         ),
                       ],
                     ),
@@ -1489,290 +1495,5 @@ class _PrivacySettingsPageState extends State<PrivacySettingsPage> {
         );
       }
     }
-  }
-}
-
-class HelpSupportPage extends StatelessWidget {
-  const HelpSupportPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Help & Support'),
-        backgroundColor: const Color(0xFF00C853),
-      ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          // FAQ Section
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            elevation: 2,
-            margin: const EdgeInsets.only(bottom: 16),
-            child: ExpansionTile(
-              title: const Text(
-                'Frequently Asked Questions',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              childrenPadding: const EdgeInsets.all(16),
-              expandedCrossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildFaqItem(
-                  'How does plant detection work?',
-                  'GrowMate uses advanced image recognition technology to identify plants and detect diseases. Simply take a clear photo of your plant, and our AI will analyze it to provide information and care recommendations.',
-                ),
-                const Divider(),
-                _buildFaqItem(
-                  'Can I use GrowMate offline?',
-                  'Some features like viewing your saved plants and care schedules work offline. However, plant identification, disease detection, and community features require an internet connection.',
-                ),
-                const Divider(),
-                _buildFaqItem(
-                  'How accurate is disease detection?',
-                  'Our disease detection system is continuously improving. Currently, it can identify common plant diseases with approximately 85-90% accuracy. Always double-check with trusted sources for serious plant health concerns.',
-                ),
-                const Divider(),
-                _buildFaqItem(
-                  'How can I back up my plant data?',
-                  'All your data is automatically backed up to your account in the cloud. If you switch devices, simply log in with the same account to access all your plants and history.',
-                ),
-              ],
-            ),
-          ),
-
-          // Contact Support
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            elevation: 2,
-            margin: const EdgeInsets.only(bottom: 16),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'Contact Support',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade50,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.email_outlined,
-                        color: Colors.blue.shade700,
-                      ),
-                    ),
-                    title: const Text('Email Support'),
-                    subtitle: const Text('support@growmate.app'),
-                    onTap: () {
-                      // Open email client
-                      // In a real app, integrate email sending functionality
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Opening email client...')),
-                      );
-                    },
-                  ),
-                  const Divider(),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.purple.shade50,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        Icons.chat_outlined,
-                        color: Colors.purple.shade700,
-                      ),
-                    ),
-                    title: const Text('Live Chat'),
-                    subtitle: const Text('Available 9AM-5PM EST, Mon-Fri'),
-                    onTap: () {
-                      _showLiveChatUnavailable(context);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Tutorials Section
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            elevation: 2,
-            margin: const EdgeInsets.only(bottom: 16),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    'App Tutorials',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _buildTutorialItem(
-                    context,
-                    'How to Identify Plants',
-                    'Learn how to use the plant identification feature',
-                    Icons.eco_outlined,
-                    Colors.green,
-                  ),
-                  const Divider(),
-                  _buildTutorialItem(
-                    context,
-                    'Setting Up Care Reminders',
-                    'Create custom care schedules for your plants',
-                    Icons.notifications_outlined,
-                    Colors.orange,
-                  ),
-                  const Divider(),
-                  _buildTutorialItem(
-                    context,
-                    'Tracking Plant Growth',
-                    'Keep a visual record of your plant\'s progress',
-                    Icons.trending_up_outlined,
-                    Colors.blue,
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Community Forums
-          Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            elevation: 2,
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(16),
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00C853).withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: const Icon(
-                  Icons.forum_outlined,
-                  color: Color(0xFF00C853),
-                ),
-              ),
-              title: const Text('Community Forums'),
-              subtitle: const Text('Connect with other plant enthusiasts'),
-              onTap: () {
-                // Launch community forums
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Forums feature coming soon!')),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFaqItem(String question, String answer) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          question,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          answer,
-          style: TextStyle(
-            color: Colors.grey.shade700,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTutorialItem(
-    BuildContext context,
-    String title,
-    String description,
-    IconData icon,
-    Color color,
-  ) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Icon(
-          icon,
-          color: color,
-        ),
-      ),
-      title: Text(title),
-      subtitle: Text(description),
-      trailing: const Icon(Icons.play_circle_outline),
-      onTap: () {
-        // Launch tutorial
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Opening tutorial: $title')),
-        );
-      },
-    );
-  }
-
-  void _showLiveChatUnavailable(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Live Chat'),
-          content: const Text(
-            'Live chat support is currently unavailable. Please try again during our operating hours (9AM-5PM EST, Monday-Friday) or send us an email at support@growmate.app',
-          ),
-          actions: [
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-        );
-      },
-    );
   }
 }
