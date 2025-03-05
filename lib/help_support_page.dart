@@ -747,7 +747,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
         return AlertDialog(
           title: const Text('Live Chat'),
           content: const Text(
-            'Live chat support is currently unavailable. Please try again during our operating hours (9AM-5PM EST, Monday-Friday) or send us an email at growmate2002@gmail.com',
+            'Live chat support is currently unavailable. Please try again during our operating hours (9AM-5PM EST, Monday-Friday) or send us an email at ',
           ),
           actions: [
             TextButton(
