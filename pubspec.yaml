@@ -53,6 +53,9 @@ dependencies:
   path_provider: ^2.1.5
   camera: ^0.11.1
   flutter_image_compress: ^2.4.0
+  firebase_messaging: ^15.2.4
+  timezone: ^0.10.0
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:
