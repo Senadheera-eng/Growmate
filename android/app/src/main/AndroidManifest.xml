@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="grow_mate_version2"
+        android:label="Grow Mate"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
