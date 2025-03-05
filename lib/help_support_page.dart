@@ -181,30 +181,185 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Help & Support',
-          style: TextStyle(fontWeight: FontWeight.bold),
+      extendBody: true,
+      body: Container(
+        // Background gradient like HomePage
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.teal.shade400, Colors.green.shade700],
+          ),
         ),
-        backgroundColor: const Color(0xFF00C853),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.contact_support_outlined),
-            onPressed: _showContactDialog,
+        child: SafeArea(
+          bottom: false,
+          child: Column(
+            children: [
+              _buildAppBar(context),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 10,
+                        offset: Offset(0, -4),
+                      )
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                    child: _showingGuideDetail
+                        ? _buildGuideDetail()
+                        : Column(
+                            children: [
+                              _buildHeader(),
+                              _buildSectionTabs(),
+                              _buildGuidesList(),
+                              _buildSupportOptions(),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          // Back button
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: const Center(
+                child: Icon(
+                  Icons.arrow_back_ios_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // App Logo and Name
+          Container(
+            height: 38,
+            width: 38,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Colors.white, Color(0xFFF5F5F5)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    colors: [Color(0xFF00C853), Color(0xFF1B5E20)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds);
+                },
+                child: const Icon(
+                  Icons.eco_rounded,
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          const Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Grow',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(
+                  text: 'Mate',
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 53, 255, 60),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          // Help & Support text
+          const Text(
+            'Help & Support',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(width: 3),
+          // Contact support icon button
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white.withOpacity(0.3),
+                width: 1,
+              ),
+            ),
+            child: IconButton(
+              icon: const Icon(
+                Icons.contact_support_outlined,
+                color: Colors.white,
+              ),
+              onPressed: _showContactDialog,
+            ),
           ),
         ],
       ),
-      body: _showingGuideDetail
-          ? _buildGuideDetail()
-          : Column(
-              children: [
-                _buildHeader(),
-                _buildSectionTabs(),
-                _buildGuidesList(),
-                _buildSupportOptions(),
-              ],
-            ),
     );
   }
 
@@ -362,52 +517,79 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
           itemBuilder: (context, index) {
             final guide = currentSection.guides[index];
 
-            return ListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-              leading: Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  color: currentSection.color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(
-                  _getIconForGuide(guide.title),
-                  color: currentSection.color,
-                  size: 24,
-                ),
-              ),
-              title: Text(
-                guide.title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                ),
-              ),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  guide.description,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 14,
+            // This container makes the whole card clickable
+            return Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              child: InkWell(
+                onTap: () {
+                  setState(() {
+                    _selectedGuideIndex = index;
+                    _showingGuideDetail = true;
+                  });
+                },
+                borderRadius: BorderRadius.circular(15),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // Icon container on the left - made it lighter green like in the screenshot
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.green.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Icon(
+                            _getIconForGuide(guide.title),
+                            color: Colors.green,
+                            size: 24,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      // Title and description - centered vertically with the icon
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              guide.title,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                                color: Color(0xFF333333),
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              guide.description,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                                height: 1.3,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      // Arrow icon
+                      Icon(
+                        Icons.chevron_right,
+                        size: 20,
+                        color: Colors.green,
+                      ),
+                    ],
                   ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              trailing: const Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Color(0xFF00C853),
-              ),
-              onTap: () {
-                setState(() {
-                  _selectedGuideIndex = index;
-                  _showingGuideDetail = true;
-                });
-              },
             );
           },
         ),
@@ -747,7 +929,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
         return AlertDialog(
           title: const Text('Live Chat'),
           content: const Text(
-            'Live chat support is currently unavailable. Please try again during our operating hours (9AM-5PM EST, Monday-Friday) or send us an email at ',
+            'Live chat support is currently unavailable. Please try again during our operating hours (9AM-5PM EST, Monday-Friday) or send us an email at growmate2002@gmail.com.',
           ),
           actions: [
             TextButton(
