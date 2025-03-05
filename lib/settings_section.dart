@@ -38,14 +38,14 @@ class SettingsSection extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _buildSettingItem(
+                  /* _buildSettingItem(
                     title: 'Dark Mode',
                     icon: Icons.dark_mode_outlined,
                     isSwitch: true,
                     currentValue:
                         Theme.of(context).brightness == Brightness.dark,
                     onChanged: onThemeChange,
-                  ),
+                  ), */
                   _buildDivider(),
                   _buildSettingItem(
                     title: 'Manage Notifications',
@@ -75,7 +75,7 @@ class SettingsSection extends StatelessWidget {
                       );
                     },
                   ),
-                  _buildDivider(),
+                  /* _buildDivider(),
                   _buildSettingItem(
                     title: 'Privacy & Security',
                     subtitle: 'Manage your privacy settings',
@@ -83,7 +83,7 @@ class SettingsSection extends StatelessWidget {
                     onTap: () {
                       // TODO: Navigate to Privacy settings
                     },
-                  ),
+                  ), */
                   _buildDivider(),
                   _buildSettingItem(
                     title: 'About GrowMate',

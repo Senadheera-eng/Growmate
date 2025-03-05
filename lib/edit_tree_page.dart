@@ -273,12 +273,42 @@ class _EditTreePageState extends State<EditTreePage> {
       if (mounted) {
         Navigator.pop(context, updatedTreeModel);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tree updated successfully')),
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 12),
+                Text('Tree updated successfully'),
+              ],
+            ),
+            backgroundColor: Color.fromARGB(255, 5, 158, 69),
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            duration: Duration(seconds: 2),
+            margin: EdgeInsets.all(16),
+          ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${e.toString()}')),
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(Icons.error, color: Colors.white),
+              SizedBox(width: 12),
+              Text('Error: ${e.toString()}'),
+            ],
+          ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          duration: Duration(seconds: 2),
+          margin: EdgeInsets.all(16),
+        ),
       );
     } finally {
       if (mounted) {
