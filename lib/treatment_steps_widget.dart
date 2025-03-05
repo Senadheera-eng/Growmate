@@ -1,5 +1,8 @@
 // treatment_steps_widget.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:grow_mate_version2/notification_service.dart';
+import 'package:grow_mate_version2/tree_model.dart';
 import 'treatment_step_model.dart';
 import 'treatment_step_service.dart';
 
@@ -21,11 +24,10 @@ class TreatmentStepsWidget extends StatelessWidget {
       builder: (context, stepsSnapshot) {
         if (!stepsSnapshot.hasData) {
           return const Center(
-            child: CircularProgressIndicator(
-              color: Color(0xFF00C853),
-              strokeWidth: 3,
-            )
-          );
+              child: CircularProgressIndicator(
+            color: Color(0xFF00C853),
+            strokeWidth: 3,
+          ));
         }
 
         final steps = stepsSnapshot.data!;
@@ -154,7 +156,8 @@ class TreatmentStepsWidget extends StatelessWidget {
                     ),
                     if (isCompleted && completedStep.outcomeAchieved != null)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 2),
                         margin: const EdgeInsets.only(top: 4),
                         decoration: BoxDecoration(
                           color: completedStep.outcomeAchieved == true
@@ -213,7 +216,7 @@ class TreatmentStepsWidget extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  
+
                   // Expected Outcome Section
                   Container(
                     width: double.infinity,
@@ -255,12 +258,13 @@ class TreatmentStepsWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // Waiting Period
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(10),
@@ -289,9 +293,9 @@ class TreatmentStepsWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Action Buttons
                   if (!isCompleted && !isCurrent && canStart)
                     SizedBox(
@@ -376,7 +380,8 @@ class TreatmentStepsWidget extends StatelessWidget {
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     child: const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(Icons.check_circle_outline),
                                         SizedBox(width: 4),
@@ -395,7 +400,7 @@ class TreatmentStepsWidget extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(width: 12),
-                                                                Expanded(
+                            Expanded(
                               child: SizedBox(
                                 height: 50,
                                 child: ElevatedButton(
@@ -412,7 +417,8 @@ class TreatmentStepsWidget extends StatelessWidget {
                                   child: FittedBox(
                                     fit: BoxFit.scaleDown,
                                     child: const Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         Icon(Icons.help_outline),
                                         SizedBox(width: 4),
@@ -641,70 +647,92 @@ class TreatmentStepsWidget extends StatelessWidget {
     }
   }
 
- // In TreatmentStepsWidget class
-Future<void> _completeStep(
-  BuildContext context,
-  TreatmentStepProgress progress,
-  bool outcomeAchieved,
-) async {
-  try {
-    // Complete the current step
-    await _stepService.completeStep(
-      progressId: progress.id,
-      outcomeAchieved: outcomeAchieved,
-    );
-
-    // Only check for all steps completion if this step was successful
-    if (outcomeAchieved) {
-      final allStepsCompleted = await _stepService.verifyAllStepsCompleted(
-        progress.treeId,
-        progress.diseaseId,
+  // In TreatmentStepsWidget class
+  Future<void> _completeStep(
+    BuildContext context,
+    TreatmentStepProgress progress,
+    bool outcomeAchieved,
+  ) async {
+    try {
+      // Complete the current step
+      await _stepService.completeStep(
+        progressId: progress.id,
+        outcomeAchieved: outcomeAchieved,
       );
 
-      if (allStepsCompleted) {
-        // All steps are completed successfully, mark tree as healthy
-        await _stepService.markTreeAsHealthy(progress.treeId);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('All treatment steps completed successfully! Tree is now healthy.'),
-            backgroundColor: Color(0xFF4CAF50),
-            behavior: SnackBarBehavior.floating,
-            margin: EdgeInsets.all(16),
-          ),
+      // Add this notification refresh code
+      try {
+        // Get the current tree data
+        final treeDoc = await FirebaseFirestore.instance
+            .collection('trees')
+            .doc(progress.treeId)
+            .get();
+
+        if (treeDoc.exists) {
+          final tree =
+              TreeModel.fromMap({...treeDoc.data()!, 'id': treeDoc.id});
+
+          // Refresh treatment notifications
+          await NotificationService().scheduleTreatmentReminder(tree);
+        }
+      } catch (e) {
+        print('Error refreshing treatment notifications: $e');
+      }
+
+      // Only check for all steps completion if this step was successful
+      if (outcomeAchieved) {
+        final allStepsCompleted = await _stepService.verifyAllStepsCompleted(
+          progress.treeId,
+          progress.diseaseId,
         );
+
+        if (allStepsCompleted) {
+          // All steps are completed successfully, mark tree as healthy
+          await _stepService.markTreeAsHealthy(progress.treeId);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'All treatment steps completed successfully! Tree is now healthy.'),
+              backgroundColor: Color(0xFF4CAF50),
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.all(16),
+            ),
+          );
+        } else {
+          // Not all steps are completed yet
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                  'Step completed successfully. Continue with remaining steps.'),
+              backgroundColor: Color(0xFF4CAF50),
+              behavior: SnackBarBehavior.floating,
+              margin: EdgeInsets.all(16),
+            ),
+          );
+        }
       } else {
-        // Not all steps are completed yet
+        // Step was not successful
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Step completed successfully. Continue with remaining steps.'),
-            backgroundColor: Color(0xFF4CAF50),
+            content:
+                Text('Step completed. Check alternative tips and try again.'),
+            backgroundColor: Color(0xFFFF9800),
             behavior: SnackBarBehavior.floating,
             margin: EdgeInsets.all(16),
           ),
         );
       }
-    } else {
-      // Step was not successful
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Step completed. Check alternative tips and try again.'),
-          backgroundColor: Color(0xFFFF9800),
+        SnackBar(
+          content: Text('Error completing step: $e'),
+          backgroundColor: Colors.red,
           behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.all(16),
+          margin: const EdgeInsets.all(16),
         ),
       );
     }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error completing step: $e'),
-        backgroundColor: Colors.red,
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.all(16),
-      ),
-    );
   }
-}
 
   Future<void> _retryStep(BuildContext context, TreatmentStep step) async {
     try {

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grow_mate_version2/account_settings_page.dart';
+import 'package:grow_mate_version2/notification_settings_page.dart';
 
 class SettingsSection extends StatelessWidget {
   final ValueChanged<bool> onThemeChange;
@@ -47,10 +48,16 @@ class SettingsSection extends StatelessWidget {
                   _buildDivider(),
                   _buildSettingItem(
                     title: 'Manage Notifications',
-                    subtitle: 'Control app notifications',
+                    subtitle: 'Manage tree care reminders',
                     icon: Icons.notifications_outlined,
                     onTap: () {
-                      // TODO: Navigate to Notifications settings
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const NotificationSettingsPage(),
+                        ),
+                      );
                     },
                   ),
                   _buildDivider(),

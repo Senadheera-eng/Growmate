@@ -1,6 +1,7 @@
 // add_tree_page.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:grow_mate_version2/notification_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -136,6 +137,24 @@ class _AddTreePageState extends State<AddTreePage> {
           .collection('trees')
           .doc(tree.id)
           .set(tree.toMap());
+
+      // Add this notification scheduling code
+      try {
+        final notificationService = NotificationService();
+
+        // Schedule appropriate notifications
+        await notificationService.scheduleWateringReminder(tree);
+        await notificationService.scheduleFertilizationReminder(tree);
+        await notificationService.scheduleCareTipReminders(tree);
+
+        // If tree is diseased, schedule treatment notifications
+        if (tree.isDiseased && tree.diseaseId != null) {
+          await notificationService.scheduleTreatmentReminder(tree);
+        }
+      } catch (e) {
+        print('Error scheduling notifications: $e');
+        // Don't show error to user, notifications are a background feature
+      }
 
       if (mounted) {
         Navigator.pop(context);
