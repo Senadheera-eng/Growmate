@@ -1,3 +1,4 @@
+// tree_model.dart
 class TreeModel {
   final String id;
   final String name;
@@ -5,10 +6,10 @@ class TreeModel {
   final List<String> photoUrls;
   final bool isDiseased;
   final String? diseaseDescription;
+  final String? diseaseId;  // Links to specific disease
   final String? location;
-  final DateTime plantedDate;
   final String userId;
-  final DateTime lastUpdated;
+  final DateTime? diseaseIdentifiedDate;
 
   TreeModel({
     required this.id,
@@ -17,10 +18,10 @@ class TreeModel {
     required this.photoUrls,
     required this.isDiseased,
     this.diseaseDescription,
+    this.diseaseId,
     this.location,
-    required this.plantedDate,
     required this.userId,
-    required this.lastUpdated,
+    this.diseaseIdentifiedDate,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,25 +32,27 @@ class TreeModel {
       'photoUrls': photoUrls,
       'isDiseased': isDiseased,
       'diseaseDescription': diseaseDescription,
+      'diseaseId': diseaseId,
       'location': location,
-      'plantedDate': plantedDate.toIso8601String(),
       'userId': userId,
-      'lastUpdated': lastUpdated.toIso8601String(),
+      'diseaseIdentifiedDate': diseaseIdentifiedDate?.toIso8601String(),
     };
   }
 
   factory TreeModel.fromMap(Map<String, dynamic> map) {
     return TreeModel(
-      id: map['id'],
-      name: map['name'],
-      ageInMonths: map['ageInMonths'],
-      photoUrls: List<String>.from(map['photoUrls']),
-      isDiseased: map['isDiseased'],
+      id: map['id'] ?? '',
+      name: map['name'] ?? '',
+      ageInMonths: map['ageInMonths']?.toInt() ?? 0,
+      photoUrls: List<String>.from(map['photoUrls'] ?? []),
+      isDiseased: map['isDiseased'] ?? false,
       diseaseDescription: map['diseaseDescription'],
+      diseaseId: map['diseaseId'],
       location: map['location'],
-      plantedDate: DateTime.parse(map['plantedDate']),
-      userId: map['userId'],
-      lastUpdated: DateTime.parse(map['lastUpdated']),
+      userId: map['userId'] ?? '',
+      diseaseIdentifiedDate: map['diseaseIdentifiedDate'] != null 
+          ? DateTime.parse(map['diseaseIdentifiedDate']) 
+          : null,
     );
   }
 }
