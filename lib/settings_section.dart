@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grow_mate_version2/account_settings_page.dart';
+import 'package:grow_mate_version2/help_support_page.dart';
 import 'package:grow_mate_version2/notification_settings_page.dart';
 
 class SettingsSection extends StatelessWidget {
@@ -98,7 +99,12 @@ class SettingsSection extends StatelessWidget {
                     subtitle: 'Get assistance with the app',
                     icon: Icons.help_outline,
                     onTap: () {
-                      // TODO: Navigate to Help page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HelpSupportPage(),
+                        ),
+                      );
                     },
                   ),
                   _buildDivider(),

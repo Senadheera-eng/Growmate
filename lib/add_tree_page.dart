@@ -32,17 +32,21 @@ class _AddTreePageState extends State<AddTreePage> {
   String? _selectedLocation;
 
   Future<void> _selectLocation() async {
-    final selectedLocation = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => LocationPicker()),
-    );
-    if (selectedLocation != null) {
-      setState(() {
-        _selectedLocation = selectedLocation;
-        _locationController.text = _selectedLocation!;
-      });
-    }
+  final selectedLocation = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => const LocationPicker()),
+  );
+  
+  if (selectedLocation != null) {
+    setState(() {
+      // Update with the full address
+      _locationController.text = selectedLocation['address'];
+      
+      // Optionally store latitude and longitude if needed
+      _selectedLocation = selectedLocation['address'];
+    });
   }
+}
 
   @override
   void initState() {
