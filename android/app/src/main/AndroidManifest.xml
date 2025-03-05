@@ -17,7 +17,7 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="YOUR_API_KEY"/>
+            android:value="AIzaSyB67YpElsPVy25Sagmwun83uYkfLZrr384"/>
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="tree_reminders_channel" />
