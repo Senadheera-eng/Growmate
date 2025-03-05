@@ -26,7 +26,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Complete your profile information',
             'Verify your email address and start using GrowMate'
           ],
-          imageAsset: 'assets/images/help/signup.png',
         ),
         HelpGuide(
           title: 'Adding Your First Tree',
@@ -40,7 +39,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Select the health status of your tree',
             'Tap "Save Tree" to complete the process'
           ],
-          imageAsset: 'assets/images/help/add_tree.png',
         ),
       ],
     ),
@@ -61,7 +59,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Wait for GrowMate to analyze the image',
             'Review the diagnosis and suggested treatments'
           ],
-          imageAsset: 'assets/images/help/disease_detection.png',
         ),
         HelpGuide(
           title: 'Understanding Diagnosis Results',
@@ -75,7 +72,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Follow the recommended treatment plans',
             'Save the diagnosis to your tree\'s health history if accurate'
           ],
-          imageAsset: 'assets/images/help/diagnosis.png',
         ),
       ],
     ),
@@ -95,7 +91,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Set up reminders for recurring care activities',
             'Check the calendar to view your care schedule'
           ],
-          imageAsset: 'assets/images/help/care_tips.png',
         ),
         HelpGuide(
           title: 'Tracking Tree Growth',
@@ -109,7 +104,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Review growth trends in the dashboard section',
             'Compare current status to historical data'
           ],
-          imageAsset: 'assets/images/help/growth_tracking.png',
         ),
       ],
     ),
@@ -129,7 +123,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Record the outcome of each treatment step',
             'Check if additional treatments are needed after completion'
           ],
-          imageAsset: 'assets/images/help/treatment.png',
         ),
         HelpGuide(
           title: 'Preventive Measures',
@@ -143,7 +136,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Apply recommended preventive treatments',
             'Monitor environmental conditions affecting plant health'
           ],
-          imageAsset: 'assets/images/help/prevention.png',
         ),
       ],
     ),
@@ -164,7 +156,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Check your internet connection for upload/download problems',
             'Contact support if issues persist'
           ],
-          imageAsset: 'assets/images/help/troubleshooting.png',
         ),
         HelpGuide(
           title: 'Improving Disease Detection',
@@ -178,7 +169,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
             'Clean your camera lens before taking photos',
             'Include both healthy and affected parts for comparison'
           ],
-          imageAsset: 'assets/images/help/photo_tips.png',
         ),
       ],
     ),
@@ -601,38 +591,6 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                   );
                 }),
 
-                const SizedBox(height: 20),
-
-                // Image placeholder
-                if (currentGuide.imageAsset.isNotEmpty)
-                  Container(
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.image_outlined,
-                            size: 50,
-                            color: Colors.grey.shade500,
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Image: ${currentGuide.title}',
-                            style: TextStyle(
-                              color: Colors.grey.shade700,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-
                 const SizedBox(height: 30),
 
                 // Navigation between guides
@@ -721,7 +679,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                 icon: Icons.email_outlined,
                 label: 'Email Us',
                 color: Colors.blue,
-                onTap: () => _launchEmail('support@growmate.app'),
+                onTap: () => _launchEmail('growmate2002@gmail.com'),
               ),
               _buildSupportOptionButton(
                 icon: Icons.help_outline,
@@ -789,7 +747,7 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
         return AlertDialog(
           title: const Text('Live Chat'),
           content: const Text(
-            'Live chat support is currently unavailable. Please try again during our operating hours (9AM-5PM EST, Monday-Friday) or send us an email at support@growmate.app',
+            'Live chat support is currently unavailable. Please try again during our operating hours (9AM-5PM EST, Monday-Friday) or send us an email at growmate2002@gmail.com',
           ),
           actions: [
             TextButton(
@@ -989,10 +947,10 @@ class _HelpSupportPageState extends State<HelpSupportPage> {
                   ),
                 ),
                 title: const Text('Email Support'),
-                subtitle: const Text('support@growmate.app'),
+                subtitle: const Text('growmate2002@gmail.com'),
                 onTap: () {
                   Navigator.pop(context);
-                  _launchEmail('support@growmate.app');
+                  _launchEmail('growmate2002@gmail.com');
                 },
               ),
               const Divider(),
@@ -1108,12 +1066,10 @@ class HelpGuide {
   final String title;
   final String description;
   final List<String> steps;
-  final String imageAsset;
 
   HelpGuide({
     required this.title,
     required this.description,
     required this.steps,
-    this.imageAsset = '',
   });
 }
