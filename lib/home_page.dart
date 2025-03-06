@@ -920,7 +920,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildAppBar(BuildContext context) {
+  /* Widget _buildAppBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       child: Row(
@@ -1076,6 +1076,170 @@ class _HomePageState extends State<HomePage>
         ],
       ),
     );
+  } */
+  Widget _buildAppBar(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      child: Row(
+        children: [
+          // App Logo and Name
+          Container(
+            height: 42,
+            width: 42,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Colors.white, Color(0xFFF5F5F5)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Center(
+              child: ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (Rect bounds) {
+                  return const LinearGradient(
+                    colors: [Color(0xFF00C853), Color(0xFF1B5E20)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ).createShader(bounds);
+                },
+                child: const Icon(
+                  Icons.eco_rounded,
+                  size: 28,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Grow',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                TextSpan(
+                  text: 'Mate',
+                  style: TextStyle(
+                    color: const Color.fromARGB(255, 53, 255, 60),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Spacer(),
+          // User info container - Wrap with Flexible to prevent overflow
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: Colors.white.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min, // Make row take minimal space
+                children: [
+                  const CircleAvatar(
+                    radius: 14,
+                    backgroundColor: Colors.white24,
+                    child: Icon(
+                      Icons.person_outline_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Wrap email text with Flexible
+                  Flexible(
+                    child: Text(
+                      currentUser?.email?.split('@')[0] ?? '',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  PopupMenuButton<String>(
+                    onSelected: _handleAccountAction,
+                    itemBuilder: (BuildContext context) {
+                      return {
+                        'Switch Account',
+                        'Create Account',
+                        'Sign Out',
+                      }.map((String choice) {
+                        IconData iconData;
+                        switch (choice) {
+                          case 'Switch Account':
+                            iconData = Icons.swap_horiz_rounded;
+                            break;
+                          case 'Create Account':
+                            iconData = Icons.person_add_rounded;
+                            break;
+                          case 'Sign Out':
+                            iconData = Icons.logout_rounded;
+                            break;
+                          default:
+                            iconData = Icons.settings;
+                        }
+
+                        return PopupMenuItem<String>(
+                          value: choice,
+                          child: Row(
+                            children: [
+                              Icon(
+                                iconData,
+                                size: 18,
+                                color: const Color(0xFF00C853),
+                              ),
+                              const SizedBox(width: 12),
+                              Text(
+                                choice,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xFF424242),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList();
+                    },
+                    offset: const Offset(0, 50),
+                    child: const Icon(
+                      Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildBottomNavigationBar(double screenWidth) {
@@ -1121,7 +1285,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget _buildNavItem(int index, IconData icon, String label) {
+  /* Widget _buildNavItem(int index, IconData icon, String label) {
     final bool isSelected = _currentIndex == index;
 
     return Expanded(
@@ -1164,6 +1328,61 @@ class _HomePageState extends State<HomePage>
                 ),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  } */
+  Widget _buildNavItem(int index, IconData icon, String label) {
+    final bool isSelected = _currentIndex == index;
+
+    return Expanded(
+      child: GestureDetector(
+        onTap: () => _changePage(index),
+        behavior: HitTestBehavior.opaque,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          margin: const EdgeInsets.symmetric(
+              vertical: 4, horizontal: 4), // Reduced horizontal margin
+          decoration: BoxDecoration(
+            color:
+                isSelected ? Colors.white.withOpacity(0.2) : Colors.transparent,
+            borderRadius: BorderRadius.circular(14),
+            border: isSelected
+                ? Border.all(color: Colors.white.withOpacity(0.5), width: 1)
+                : null,
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                icon,
+                color:
+                    isSelected ? Colors.white : Colors.white.withOpacity(0.7),
+                size: 20,
+              ),
+              const SizedBox(height: 2),
+              Flexible(
+                // Wrap the Text in a Flexible widget
+                child: Text(
+                  label,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: isSelected
+                        ? Colors.white
+                        : Colors.white.withOpacity(0.7),
+                    fontSize: 10,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    letterSpacing: 0.1,
+                    height: 1.0,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
             ],
           ),
