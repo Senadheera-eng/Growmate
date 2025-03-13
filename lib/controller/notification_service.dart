@@ -28,67 +28,7 @@ class NotificationService {
   // Private constructor for singleton pattern
   NotificationService._internal();
 
-  /* Future<void> init() async {
-    if (_initialized) return;
-
-    // Initialize timezone data for scheduled notifications
-    tz_data.initializeTimeZones();
-
-    // Request permission for notifications
-    NotificationSettings settings = await _firebaseMessaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-      provisional: false,
-    );
-
-    print("Firebase messaging permission status: ${settings.authorizationStatus}");
-
-
-    // Initialize local notifications
-    const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    const InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-    );
-
-    await _localNotifications.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: (NotificationResponse response) {
-        _handleNotificationTap(response.payload);
-      },
-    );
-
-    // Request exact alarms permission for Android 12+
-    if (Platform.isAndroid) {
-      AndroidFlutterLocalNotificationsPlugin androidImplementation =
-          _localNotifications.resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()!;
-
-      // Request exact alarms permission
-      await androidImplementation.requestExactAlarmsPermission();
-    }
-
-    // Handle FCM token refresh
-    FirebaseMessaging.instance.onTokenRefresh.listen(_saveTokenToDatabase);
-
-    // Get the token if it's available
-    String? token = await _firebaseMessaging.getToken();
-    if (token != null) {
-      await _saveTokenToDatabase(token);
-    }
-
-    // Handle background messages
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    // Foreground message handler
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      _handleForegroundMessage(message);
-    });
-
-    _initialized = true;
-  } */
+  
   Future<void> init() async {
     if (_initialized) return;
 
