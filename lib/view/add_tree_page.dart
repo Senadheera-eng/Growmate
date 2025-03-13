@@ -1,15 +1,15 @@
 // add_tree_page.dart
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:grow_mate_version2/notification_service.dart';
+import 'package:grow_mate_version2/controller/notification_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
-import 'tree_model.dart';
-import 'disease_model.dart';
-import 'location_picker.dart';
+import '../model/tree_model.dart';
+import '../model/disease_model.dart';
+import '../controller/location_picker.dart';
 
 class AddTreePage extends StatefulWidget {
   const AddTreePage({Key? key}) : super(key: key);

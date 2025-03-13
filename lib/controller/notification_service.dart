@@ -8,7 +8,7 @@ import 'package:timezone/timezone.dart' as tz;
 import 'dart:io';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:uuid/uuid.dart';
-import 'model/tree_model.dart';
+import '../model/tree_model.dart';
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();

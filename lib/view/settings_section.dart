@@ -1,9 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:grow_mate_version2/account_settings_page.dart';
-import 'package:grow_mate_version2/help_support_page.dart';
-import 'package:grow_mate_version2/login_page.dart';
-import 'package:grow_mate_version2/notification_settings_page.dart';
+import 'package:grow_mate_version2/view/account_settings_page.dart';
+import 'package:grow_mate_version2/view/help_support_page.dart';
+import 'package:grow_mate_version2/view/login_page.dart';
+import 'package:grow_mate_version2/view/notification_settings_page.dart';
 
 class SettingsSection extends StatelessWidget {
   final ValueChanged<bool> onThemeChange;
@@ -40,14 +40,6 @@ class SettingsSection extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  /* _buildSettingItem(
-                    title: 'Dark Mode',
-                    icon: Icons.dark_mode_outlined,
-                    isSwitch: true,
-                    currentValue:
-                        Theme.of(context).brightness == Brightness.dark,
-                    onChanged: onThemeChange,
-                  ), */
                   _buildDivider(),
                   _buildSettingItem(
                     title: 'Manage Notifications',
@@ -77,15 +69,6 @@ class SettingsSection extends StatelessWidget {
                       );
                     },
                   ),
-                  /* _buildDivider(),
-                  _buildSettingItem(
-                    title: 'Privacy & Security',
-                    subtitle: 'Manage your privacy settings',
-                    icon: Icons.security_outlined,
-                    onTap: () {
-                      // TODO: Navigate to Privacy settings
-                    },
-                  ), */
                   _buildDivider(),
                   _buildSettingItem(
                     title: 'About GrowMate',
@@ -265,61 +248,6 @@ class SettingsSection extends StatelessWidget {
     );
   }
 
-  /* Widget _buildLogoutButton(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.red.shade300,
-            Colors.red.shade700,
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.red.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            // TODO: Implement Logout functionality
-          },
-          borderRadius: BorderRadius.circular(12),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Icon(
-                  Icons.logout_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-                SizedBox(width: 10),
-                Text(
-                  'Logout',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  } */
   Widget _buildLogoutButton(BuildContext context) {
     return Container(
       width: double.infinity,

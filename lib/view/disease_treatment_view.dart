@@ -1,8 +1,8 @@
 // disease_treatment_view.dart
 import 'package:flutter/material.dart';
 import 'treatment_steps_widget.dart';
-import 'tree_model.dart';
-import 'disease_model.dart';
+import '../model/tree_model.dart';
+import '../model/disease_model.dart';
 
 class DiseaseTreatmentView extends StatelessWidget {
   final TreeModel tree;

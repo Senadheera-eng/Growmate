@@ -2,7 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
-import 'treatment_step_model.dart';
+import '../model/treatment_step_model.dart';
 
 class TreatmentStepService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

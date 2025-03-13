@@ -1,6 +1,6 @@
 // notification_settings_page.dart
 import 'package:flutter/material.dart';
-import 'notification_service.dart';
+import '../controller/notification_service.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({Key? key}) : super(key: key);

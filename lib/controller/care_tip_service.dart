@@ -2,7 +2,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
-import 'care_tip_tracking_model.dart';
+import '../model/care_tip_tracking_model.dart';
 
 class CareTipService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;

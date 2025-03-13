@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
-import 'tree_stats_model.dart';
-import 'tree_model.dart';
+import '../model/tree_stats_model.dart';
+import '../model/tree_model.dart';
 
 class CareCalendarWidget extends StatefulWidget {
   final Map<DateTime, List<TreeActivity>> events;

@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:grow_mate_version2/notification_service.dart';
+import 'package:grow_mate_version2/controller/notification_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'drag_and_drop_section.dart';
 import 'my_trees_section.dart';
@@ -9,7 +9,7 @@ import 'tips_section.dart';
 import 'settings_section.dart';
 import 'login_page.dart';
 import 'tree_dashboard_page.dart';
-import 'tflite_model.dart';
+import '../controller/tflite_model.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -282,163 +282,6 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  /* Widget _buildAppBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          // App Logo and Name
-          Container(
-            height: 42,
-            width: 42,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Colors.white, Color(0xFFF5F5F5)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  spreadRadius: 1,
-                  blurRadius: 6,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Center(
-              child: ShaderMask(
-                blendMode: BlendMode.srcIn,
-                shaderCallback: (Rect bounds) {
-                  return const LinearGradient(
-                    colors: [Color(0xFF00C853), Color(0xFF1B5E20)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ).createShader(bounds);
-                },
-                child: const Icon(
-                  Icons.eco_rounded,
-                  size: 28,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: 'Grow',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                TextSpan(
-                  text: 'Mate',
-                  style: TextStyle(
-                    color: const Color.fromARGB(255, 53, 255, 60),
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const Spacer(),
-          // User info container
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withOpacity(0.3),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                const CircleAvatar(
-                  radius: 14,
-                  backgroundColor: Colors.white24,
-                  child: Icon(
-                    Icons.person_outline_rounded,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  currentUser?.email?.split('@')[0] ?? '',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                PopupMenuButton<String>(
-                  onSelected: _handleAccountAction,
-                  itemBuilder: (BuildContext context) {
-                    return {
-                      'Switch Account',
-                      'Create Account',
-                      'Sign Out',
-                    }.map((String choice) {
-                      IconData iconData;
-                      switch (choice) {
-                        case 'Switch Account':
-                          iconData = Icons.swap_horiz_rounded;
-                          break;
-                        case 'Create Account':
-                          iconData = Icons.person_add_rounded;
-                          break;
-                        case 'Sign Out':
-                          iconData = Icons.logout_rounded;
-                          break;
-                        default:
-                          iconData = Icons.settings;
-                      }
-
-                      return PopupMenuItem<String>(
-                        value: choice,
-                        child: Row(
-                          children: [
-                            Icon(
-                              iconData,
-                              size: 18,
-                              color: const Color(0xFF00C853),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              choice,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF424242),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList();
-                  },
-                  offset: const Offset(0, 50),
-                  child: const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  } */
   Widget _buildAppBar(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

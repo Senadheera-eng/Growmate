@@ -473,7 +473,7 @@ class _DetailRow extends StatelessWidget {
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'tree_model.dart';
+import '../model/tree_model.dart';
 import 'edit_tree_page.dart'; // Import the new edit page
 
 class TreeDetailPage extends StatefulWidget {

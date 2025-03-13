@@ -1,10 +1,10 @@
 // treatment_steps_widget.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:grow_mate_version2/notification_service.dart';
-import 'package:grow_mate_version2/tree_model.dart';
-import 'treatment_step_model.dart';
-import 'treatment_step_service.dart';
+import 'package:grow_mate_version2/controller/notification_service.dart';
+import 'package:grow_mate_version2/model/tree_model.dart';
+import '../model/treatment_step_model.dart';
+import '../controller/treatment_step_service.dart';
 
 class TreatmentStepsWidget extends StatelessWidget {
   final String treeId;
