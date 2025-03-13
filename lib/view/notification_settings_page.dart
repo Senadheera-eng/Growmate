@@ -1,6 +1,6 @@
 // notification_settings_page.dart
 import 'package:flutter/material.dart';
-import 'notification_service.dart';
+import '../controller/notification_service.dart';
 
 class NotificationSettingsPage extends StatefulWidget {
   const NotificationSettingsPage({Key? key}) : super(key: key);
@@ -51,96 +51,163 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-              content: const Row(
-                children: [
-                  Icon(Icons.notifications_active, color: Colors.white),
-                  SizedBox(width: 12),
-                  Text('Notification preferences saved'),
-                ],
-              ),
-              backgroundColor: const Color.fromARGB(255, 5, 158, 69),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              duration: const Duration(seconds: 2),
-              margin: const EdgeInsets.all(16),
-            ),
+        content: const Row(
+          children: [
+            Icon(Icons.notifications_active, color: Colors.white),
+            SizedBox(width: 12),
+            Text('Notification preferences saved'),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 5, 158, 69),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        duration: const Duration(seconds: 2),
+        margin: const EdgeInsets.all(16),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notification Settings'),
-        backgroundColor: const Color(0xFF00C853),
-      ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(color: Color(0xFF00C853)))
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      extendBody: true,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Colors.teal.shade400, Colors.green.shade700],
+          ),
+        ),
+        child: SafeArea(
+          bottom: false,
+          child: _isLoading
+              ? const Center(child: CircularProgressIndicator(color: Colors.white))
+              : Column(
                   children: [
-                    _buildHeader(),
-                    const SizedBox(height: 20),
-                    _buildNotificationSection(
-                      title: 'Watering Reminders',
-                      subtitle: 'Remind me when it\'s time to water my trees',
-                      icon: Icons.opacity_rounded,
-                      color: Colors.blue,
-                      value: _wateringReminders,
-                      onChanged: (value) {
-                        setState(() => _wateringReminders = value);
-                      },
+                    // Custom AppBar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: IconButton(
+                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          const Text(
+                            'Notification Settings',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    _buildNotificationSection(
-                      title: 'Fertilization Reminders',
-                      subtitle:
-                          'Remind me when it\'s time to fertilize my trees',
-                      icon: Icons.eco_rounded,
-                      color: Colors.green,
-                      value: _fertilizationReminders,
-                      onChanged: (value) {
-                        setState(() => _fertilizationReminders = value);
-                      },
+                    // Main Content
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(0, -4),
+                            )
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _buildHeader(),
+                                  const SizedBox(height: 20),
+                                  _buildNotificationSection(
+                                    title: 'Watering Reminders',
+                                    subtitle: 'Remind me when it\'s time to water my trees',
+                                    icon: Icons.opacity_rounded,
+                                    color: Colors.blue,
+                                    value: _wateringReminders,
+                                    onChanged: (value) {
+                                      setState(() => _wateringReminders = value);
+                                    },
+                                  ),
+                                  _buildNotificationSection(
+                                    title: 'Fertilization Reminders',
+                                    subtitle:
+                                        'Remind me when it\'s time to fertilize my trees',
+                                    icon: Icons.eco_rounded,
+                                    color: Colors.green,
+                                    value: _fertilizationReminders,
+                                    onChanged: (value) {
+                                      setState(() => _fertilizationReminders = value);
+                                    },
+                                  ),
+                                  _buildNotificationSection(
+                                    title: 'Care Tips Reminders',
+                                    subtitle: 'Remind me about other care tasks for my trees',
+                                    icon: Icons.tips_and_updates_rounded,
+                                    color: Colors.amber,
+                                    value: _careTipsReminders,
+                                    onChanged: (value) {
+                                      setState(() => _careTipsReminders = value);
+                                    },
+                                  ),
+                                  _buildNotificationSection(
+                                    title: 'Treatment Reminders',
+                                    subtitle:
+                                        'Remind me to continue treatment steps for diseased trees',
+                                    icon: Icons.healing_rounded,
+                                    color: Colors.red,
+                                    value: _treatmentReminders,
+                                    onChanged: (value) {
+                                      setState(() => _treatmentReminders = value);
+                                    },
+                                  ),
+                                  const SizedBox(height: 24),
+                                  _buildSaveButton(),
+                                  const SizedBox(height: 16),
+                                  _buildRefreshButton(),
+                                  const SizedBox(height: 16),
+                                  _buildTestNotificationButton(),
+                                  const SizedBox(height: 30),
+                                  _buildNotificationInfo(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
-                    _buildNotificationSection(
-                      title: 'Care Tips Reminders',
-                      subtitle: 'Remind me about other care tasks for my trees',
-                      icon: Icons.tips_and_updates_rounded,
-                      color: Colors.amber,
-                      value: _careTipsReminders,
-                      onChanged: (value) {
-                        setState(() => _careTipsReminders = value);
-                      },
-                    ),
-                    _buildNotificationSection(
-                      title: 'Treatment Reminders',
-                      subtitle:
-                          'Remind me to continue treatment steps for diseased trees',
-                      icon: Icons.healing_rounded,
-                      color: Colors.red,
-                      value: _treatmentReminders,
-                      onChanged: (value) {
-                        setState(() => _treatmentReminders = value);
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                    _buildSaveButton(),
-                    const SizedBox(height: 16),
-                    _buildRefreshButton(),
-                    const SizedBox(height: 16),
-                    _buildTestNotificationButton(),
-                    const SizedBox(height: 30),
-                    _buildNotificationInfo(),
                   ],
                 ),
-              ),
-            ),
+        ),
+      ),
     );
   }
 

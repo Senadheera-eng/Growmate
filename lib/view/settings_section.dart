@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:grow_mate_version2/account_settings_page.dart';
-import 'package:grow_mate_version2/help_support_page.dart';
-import 'package:grow_mate_version2/notification_settings_page.dart';
+import 'package:grow_mate_version2/view/account_settings_page.dart';
+import 'package:grow_mate_version2/view/help_support_page.dart';
+import 'package:grow_mate_version2/view/login_page.dart';
+import 'package:grow_mate_version2/view/notification_settings_page.dart';
 
 class SettingsSection extends StatelessWidget {
   final ValueChanged<bool> onThemeChange;
@@ -38,14 +40,6 @@ class SettingsSection extends StatelessWidget {
               child: ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
-                  _buildSettingItem(
-                    title: 'Dark Mode',
-                    icon: Icons.dark_mode_outlined,
-                    isSwitch: true,
-                    currentValue:
-                        Theme.of(context).brightness == Brightness.dark,
-                    onChanged: onThemeChange,
-                  ),
                   _buildDivider(),
                   _buildSettingItem(
                     title: 'Manage Notifications',
@@ -73,15 +67,6 @@ class SettingsSection extends StatelessWidget {
                           builder: (context) => const AccountSettingsPage(),
                         ),
                       );
-                    },
-                  ),
-                  _buildDivider(),
-                  _buildSettingItem(
-                    title: 'Privacy & Security',
-                    subtitle: 'Manage your privacy settings',
-                    icon: Icons.security_outlined,
-                    onTap: () {
-                      // TODO: Navigate to Privacy settings
                     },
                   ),
                   _buildDivider(),
@@ -289,7 +274,14 @@ class SettingsSection extends StatelessWidget {
         color: Colors.transparent,
         child: InkWell(
           onTap: () {
-            // TODO: Implement Logout functionality
+            // Sign out from Firebase
+            FirebaseAuth.instance.signOut();
+
+            // Navigate to login page and remove all previous routes
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const LoginPage()),
+              (Route<dynamic> route) => false,
+            );
           },
           borderRadius: BorderRadius.circular(12),
           child: Padding(

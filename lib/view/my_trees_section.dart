@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'tree_model.dart';
+import '../model/tree_model.dart';
 import 'add_tree_page.dart';
 import 'tree_detail_page.dart';
 

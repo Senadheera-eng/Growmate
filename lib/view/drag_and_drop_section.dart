@@ -646,7 +646,7 @@ class DragAndDropSection extends StatelessWidget {
                     height: 320,
                     child: _buildUploadSection(),
                   ),
-
+                const SizedBox(height: 20),
                 // Bottom buttons
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 20, 20),
@@ -743,7 +743,7 @@ class DragAndDropSection extends StatelessWidget {
     required VoidCallback? onTap,
   }) {
     return Material(
-      color: isPrimary ? const Color(0xFF00C853) : Colors.white,
+      color: isPrimary ? const Color(0xFF00C853) : const Color.fromARGB(255, 228, 226, 226),
       borderRadius: BorderRadius.circular(15),
       elevation: isProcessing ? 0 : 2,
       shadowColor: isPrimary

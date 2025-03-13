@@ -21,7 +21,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-  
+
   File? _imageFile;
   String? _imageUrl;
   bool _isLoading = true;
@@ -50,10 +50,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       final User? currentUser = _auth.currentUser;
       if (currentUser != null) {
         // Direct document access instead of querying
-        final userData = await _firestore
-            .collection('users')
-            .doc(currentUser.uid)
-            .get();
+        final userData =
+            await _firestore.collection('users').doc(currentUser.uid).get();
 
         if (userData.exists) {
           final data = userData.data();
@@ -90,7 +88,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? pickedImage = await picker.pickImage(
-      source: ImageSource.gallery, 
+      source: ImageSource.gallery,
       maxWidth: 800,
       maxHeight: 800,
       imageQuality: 85,
@@ -112,13 +110,15 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
       final User? currentUser = _auth.currentUser;
       if (currentUser == null) return null;
 
-      final String fileName = 'profile_${currentUser.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final Reference storageRef = _storage.ref().child('profile_images/$fileName');
-      
+      final String fileName =
+          'profile_${currentUser.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final Reference storageRef =
+          _storage.ref().child('profile_images/$fileName');
+
       // Upload the file
       final UploadTask uploadTask = storageRef.putFile(_imageFile!);
       final TaskSnapshot snapshot = await uploadTask;
-      
+
       // Get download URL
       final String downloadUrl = await snapshot.ref.getDownloadURL();
       return downloadUrl;
@@ -173,7 +173,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
             duration: Duration(seconds: 1),
           ),
         );
-        
+
         // Navigate back to settings page after a short delay
         Future.delayed(const Duration(seconds: 2), () {
           if (mounted) {
@@ -204,6 +204,7 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -215,13 +216,16 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
           ),
         ),
         child: SafeArea(
+          bottom: false,
           child: _isLoading
-              ? const Center(child: CircularProgressIndicator(color: Colors.white))
+              ? const Center(
+                  child: CircularProgressIndicator(color: Colors.white))
               : Column(
                   children: [
                     // Custom AppBar
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 12.0),
                       child: Row(
                         children: [
                           Container(
@@ -230,7 +234,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: IconButton(
-                              icon: const Icon(Icons.arrow_back, color: Colors.white),
+                              icon: const Icon(Icons.arrow_back,
+                                  color: Colors.white),
                               onPressed: () => Navigator.pop(context),
                             ),
                           ),
@@ -248,22 +253,46 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                     ),
                     // Main Content
                     Expanded(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                          child: Form(
-                            key: _formKey,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const SizedBox(height: 30),
-                                _buildProfileImageSection(),
-                                const SizedBox(height: 40),
-                                _buildInfoCard(),
-                                const SizedBox(height: 40),
-                                _buildSaveButton(),
-                                const SizedBox(height: 40),
-                              ],
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 8),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(0, -4),
+                            )
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 24.0),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 30),
+                                    _buildProfileImageSection(),
+                                    const SizedBox(height: 40),
+                                    _buildInfoCard(),
+                                    const SizedBox(height: 40),
+                                    _buildSaveButton(),
+                                    const SizedBox(height: 40),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -316,7 +345,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
                             return Center(
                               child: CircularProgressIndicator(
                                 color: const Color(0xFF00C853),
-                                value: loadingProgress.expectedTotalBytes != null
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
                                     ? loadingProgress.cumulativeBytesLoaded /
                                         loadingProgress.expectedTotalBytes!
                                     : null,
@@ -365,7 +395,8 @@ class _AccountSettingsPageState extends State<AccountSettingsPage> {
               ),
               child: IconButton(
                 padding: EdgeInsets.zero,
-                icon: const Icon(Icons.camera_alt, color: Colors.white, size: 24),
+                icon:
+                    const Icon(Icons.camera_alt, color: Colors.white, size: 24),
                 onPressed: _pickImage,
               ),
             ),
