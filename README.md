@@ -13,7 +13,6 @@ A comprehensive Flutter application for coconut tree management and disease dete
 - [Usage](#-usage)
 - [Future Enhancements](#-future-enhancements)
 - [Contributors](#-contributors)
-- [License](#-license)
 
 ## 🔍 Overview
 
@@ -175,10 +174,6 @@ A comprehensive user guide is available within the app, providing detailed instr
 - [Lahiru Senadheera](https://github.com/Senadheera-eng) - UI/UX Design
 - [Janindu Jayasika](https://github.com/janindujm) - ML Model Development
 - [Achintha Rathnayake](https://github.com/Achintha0911) - ML Model App Integration
-
-## 📃 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ---
 
