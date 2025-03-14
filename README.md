@@ -177,4 +177,4 @@ A comprehensive user guide is available within the app, providing detailed instr
 
 ---
 
-Made with ❤️ by NovaSync Solutions
+Made with ❤️ by NovaSync Tech
