@@ -3,17 +3,17 @@
 A comprehensive Flutter application for coconut tree management and disease detection, designed to help farmers and tree owners monitor their trees' health, implement treatment plans, and maintain optimal growing conditions.
 
 ## 📋 Table of Contents
-- [Overview](#overview)
-- [Features](#features)
-- [Screenshots](#screenshots)
-- [Architecture](#architecture)
-- [Technologies Used](#technologies-used)
-- [Database Structure](#database-structure)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Future Enhancements](#future-enhancements)
-- [Contributors](#contributors)
-- [License](#license)
+- [Overview](#-overview)
+- [Features](#-features)
+- [Screenshots](#-screenshots)
+- [Architecture](#️-architecture)
+- [Technologies Used](#️-technologies-used)
+- [Database Structure](#-database-structure)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Future Enhancements](#-future-enhancements)
+- [Contributors](#-contributors)
+- [License](#-license)
 
 ## 🔍 Overview
 
