@@ -2,9 +2,6 @@
 
 A comprehensive Flutter application for coconut tree management and disease detection, designed to help farmers and tree owners monitor their trees' health, implement treatment plans, and maintain optimal growing conditions.
 
-![MainScreen](https://github.com/user-attachments/assets/c1e903a3-1b58-4436-96b3-d69e1ae4b1a6)
-![GrowMate Main Screen](screenshots/main_screen.png)
-
 ## 📋 Table of Contents
 - [Overview](#overview)
 - [Features](#features)
@@ -29,9 +26,6 @@ GrowMate helps users:
 - Receive timely reminders for care activities
 - Maintain a comprehensive record of tree care
 
-![MainScreen](https://github.com/user-attachments/assets/97d645f1-a727-48e8-ae3d-eff5002cd189)
-![GrowMate Disease Detection](screenshots/disease_detection.png)
-
 ## ✨ Features
 
 ### 🌳 Tree Management
@@ -40,9 +34,6 @@ GrowMate helps users:
 - **Photo Gallery**: Visual history of each tree with multiple images
 - **Location Tracking**: Integrates with Google Maps to record tree positions
 
-![Screenshot_20250306_085614](https://github.com/user-attachments/assets/ed281355-1dcf-4572-a6a4-4455fdf27741)
-![GrowMate Location Service](screenshots/location_service.png)
-
 ### 🔬 Disease Detection & Treatment
 - **AI-Powered Analysis**: Image recognition for early disease detection
 - **Disease Information**: Comprehensive database of common tree diseases
@@ -50,9 +41,7 @@ GrowMate helps users:
 - **Progress Tracking**: Monitor treatment effectiveness over time
 
 #### ML Disease Detection Results
-![Healthy Leaf Detection](screenshots/healthy_leaf.png)
-![Yellowing Leaf Detection](screenshots/yellowing_leaf.png)
-![Drying Leaf Detection](screenshots/drying_leaf.png)
+![4](https://github.com/user-attachments/assets/a4724443-1f1d-4144-83b9-b3b8cbb95dcf)
 
 ### 📊 Dashboard & Statistics
 - **Health Overview**: Visual summary of tree health status
@@ -71,35 +60,10 @@ GrowMate helps users:
 - **Data Synchronization**: Cloud storage for accessing data across devices
 - **Settings Customization**: Personalized app configuration
 
-![Screenshot_20250306_085752](https://github.com/user-attachments/assets/22dd2b0f-7a8b-42ce-8207-778ecd3cbc2f)
-![GrowMate Calendar](screenshots/calendar_view.png)
-
 ## 📱 Screenshots
-
-### Home Screen
-![MainScreen](https://github.com/user-attachments/assets/b2904921-299e-4edb-92c6-509d77e8056d)
-![Home Screen](screenshots/home_screen.png)
-
-### Tree Details
-![Screenshot_20250306_085601](https://github.com/user-attachments/assets/9c3162a5-a0ce-48de-aced-3dec3ef85014)
-![Tree Details](screenshots/tree_details.png)
-
-### Disease Detection
-![Screenshot_20250306_085631](https://github.com/user-attachments/assets/3af0e474-8dc8-4c90-82b7-f76e40069d17)
-![Disease Detection](screenshots/disease_detection.png)
-
-### Treatment Steps
-![Screenshot_20250306_085704](https://github.com/user-attachments/assets/21aa9a23-49ba-4696-ad2d-564659a038c6)
-![Screenshot_20250306_085713](https://github.com/user-attachments/assets/c031de72-8977-444a-a854-74f0d0799015)
-![Treatment Steps](screenshots/treatment_steps.png)
-
-### Calendar View
-![Screenshot_20250306_085752](https://github.com/user-attachments/assets/9b05f7e3-fedf-4ed7-b869-c33eb2881cbd)
-![Calendar View](screenshots/calendar_view.png)
-
-### Statistics Dashboard
-![Screenshot_20250306_085808](https://github.com/user-attachments/assets/cf8fbf79-ebbf-4aa7-8a25-a03b5a2d941d)
-![Statistics Dashboard](screenshots/statistics_dashboard.png)
+![1](https://github.com/user-attachments/assets/b59895c2-ae1b-4a49-b380-ca69f049fe26)
+![2](https://github.com/user-attachments/assets/1a0d4237-fdc9-4953-88e3-e67f21bb3bc1)
+![3](https://github.com/user-attachments/assets/c0dc1800-a72c-42ee-b872-f842aed04cc9)
 
 ## 🏗️ Architecture
 
@@ -190,10 +154,15 @@ GrowMate uses Cloud Firestore with the following collections:
 6. **Check statistics** on the dashboard to monitor overall health
 7. **Set up notifications** for regular care activities
 
+A comprehensive user guide is available within the app, providing detailed instructions for all features and functionality.
+
 ## 🔮 Future Enhancements
 
 - **Multi-language Support**: Localization for international users
 - **Offline Mode**: Enhanced functionality without internet connection
+- **Live Chat Support**: In-app customer service and expert consultation
+- **Dark Mode**: Alternative UI theme for better visibility in low-light conditions
+- **Location-based Tips**: Customized advice based on local climate and growing conditions
 - **Community Features**: Share tips and advice with other users
 - **Advanced Analytics**: More detailed growth and health statistics
 - **Expert Consultation**: In-app connection to tree health experts
