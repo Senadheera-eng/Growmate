@@ -1,4 +1,4 @@
-# GrowMate 🌱
+# GrowMate - AI Powered Plant Care Companion 🌱
 
 A comprehensive Flutter application for coconut tree management and disease detection, designed to help farmers and tree owners monitor their trees' health, implement treatment plans, and maintain optimal growing conditions.
 
@@ -171,10 +171,10 @@ A comprehensive user guide is available within the app, providing detailed instr
 
 ## 👥 Contributors
 
-- [Team Member 1](https://github.com/username1) - Role/Responsibility
-- [Team Member 2](https://github.com/username2) - Role/Responsibility
-- [Team Member 3](https://github.com/username3) - Role/Responsibility
-- [Team Member 4](https://github.com/username4) - Role/Responsibility
+- [Dulina Senarathne](https://github.com/DulinaS) - FrontEnd,BackEnd & Database
+- [Lahiru Senadheera](https://github.com/Senadheera-eng) - UI/UX Design
+- [Janindu Jayasika](https://github.com/janindujm) - ML Model Development
+- [Achintha Rathnayake](https://github.com/Achintha0911) - ML Model App Integration
 
 ## 📃 License
 
@@ -182,4 +182,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ by [Your Team Name]
+Made with ❤️ by NovaSync Solutions
